@@ -1,0 +1,1441 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover"/>
+<title>Tissot Co. — Live Sales System 2026</title>
+<style>
+/* iOS Safari fixes */
+* { -webkit-tap-highlight-color: transparent; }
+input, select, textarea { -webkit-appearance: none; font-size: 16px !important; }
+body { -webkit-overflow-scrolling: touch; }
+
+:root {
+  --gold:#B8952A;--gold-dark:#8C6E1A;--gold-light:#F5E9C4;
+  --navy:#0D1B2A;--navy-mid:#1B2E42;--navy-light:#2C4A66;
+  --white:#FFFFFF;--off:#F8F7F4;--surface:#F0EDE6;--border:#DDD8CE;
+  --text:#1A1A1A;--muted:#6B6560;--light:#9B948D;
+  --green:#1A6B45;--green-bg:#E8F5EE;
+  --red:#8B2020;--red-bg:#FAEAEA;
+  --blue:#1A4B8B;--blue-bg:#E8EEF8;
+  --amber:#7A5010;--amber-bg:#FDF3DC;
+  --purple:#5B3FA0;--purple-bg:#EEE8F8;
+  --r:12px;--rs:8px;
+  --sh:0 2px 12px rgba(0,0,0,0.08);--shl:0 8px 40px rgba(0,0,0,0.16);
+}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
+body{font-family:'Segoe UI',system-ui,-apple-system,sans-serif;background:var(--surface);color:var(--text);min-height:100vh;font-size:14px;-webkit-font-smoothing:antialiased;}
+button{font-family:inherit;cursor:pointer;}
+input,select,textarea{font-family:inherit;}
+.hidden{display:none!important;}
+
+/* ══ SCREEN MANAGER ══ */
+.screen{display:none;min-height:100vh;}
+.screen.active{display:flex;flex-direction:column;}
+#screen-setup.active,#screen-login.active{align-items:center;justify-content:center;background:linear-gradient(150deg,var(--navy) 0%,#1B2E42 55%,#243B55 100%);padding:16px;}
+
+/* ══ SETUP SCREEN ══ */
+.setup-box{background:var(--white);border-radius:20px;box-shadow:var(--shl);width:100%;max-width:540px;overflow:hidden;}
+.brand-header{background:var(--navy);padding:32px;text-align:center;border-bottom:3px solid var(--gold);}
+.brand-logo{font-size:30px;font-weight:800;letter-spacing:5px;color:var(--gold);text-shadow:0 2px 8px rgba(184,149,42,0.3);}
+.brand-sub{font-size:10px;letter-spacing:3px;color:rgba(255,255,255,0.4);margin-top:5px;text-transform:uppercase;}
+.setup-body{padding:28px;}
+.setup-intro{font-size:13px;color:var(--muted);line-height:1.7;margin-bottom:22px;background:var(--off);padding:14px;border-radius:var(--rs);border-left:3px solid var(--gold);}
+.step-card{display:flex;gap:14px;margin-bottom:14px;padding:14px;background:var(--off);border-radius:var(--rs);border:1px solid var(--border);}
+.step-num{width:32px;height:32px;border-radius:50%;background:var(--navy);color:var(--gold);font-weight:800;font-size:14px;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.step-info strong{display:block;font-size:13px;color:var(--navy);margin-bottom:4px;}
+.step-info p{font-size:12px;color:var(--muted);line-height:1.6;}
+.step-info a{color:var(--blue);font-weight:600;text-decoration:none;}
+.step-info a:hover{text-decoration:underline;}
+.sql-block{background:#0D1B2A;border-radius:var(--rs);padding:16px;margin:14px 0;position:relative;}
+.sql-block pre{color:#B8952A;font-size:10.5px;line-height:1.8;white-space:pre-wrap;word-break:break-all;}
+.btn-copy{position:absolute;top:10px;right:10px;background:var(--gold);color:var(--navy);border:none;border-radius:6px;padding:5px 12px;font-size:11px;font-weight:700;cursor:pointer;}
+.setup-sep{height:1px;background:var(--border);margin:20px 0;}
+.field-label{font-size:11px;font-weight:700;letter-spacing:.5px;color:var(--muted);text-transform:uppercase;margin-bottom:6px;display:block;}
+.field-input{width:100%;border:1.5px solid var(--border);border-radius:var(--rs);padding:11px 14px;font-size:13px;font-family:monospace;color:var(--text);background:var(--off);outline:none;transition:border-color .2s;margin-bottom:12px;}
+.field-input:focus{border-color:var(--gold);background:var(--white);}
+.btn-primary{width:100%;padding:14px;background:var(--gold);color:var(--navy);font-size:15px;font-weight:800;letter-spacing:1px;border:none;border-radius:var(--rs);cursor:pointer;text-transform:uppercase;transition:all .2s;}
+.btn-primary:hover{background:var(--gold-dark);color:var(--white);}
+.btn-primary:active{transform:scale(0.98);}
+.msg{padding:12px 16px;border-radius:var(--rs);font-size:13px;font-weight:500;margin-top:12px;display:none;}
+.msg-err{background:var(--red-bg);color:var(--red);border-left:4px solid var(--red);}
+.msg-ok{background:var(--green-bg);color:var(--green);border-left:4px solid var(--green);}
+
+/* ══ LOGIN SCREEN ══ */
+.login-box{background:var(--white);border-radius:20px;box-shadow:var(--shl);width:100%;max-width:400px;overflow:hidden;}
+.login-body{padding:28px 28px 32px;}
+.login-title{font-size:18px;font-weight:700;color:var(--navy);margin-bottom:4px;}
+.login-sub-title{font-size:12px;color:var(--muted);margin-bottom:24px;}
+.f-label{font-size:11px;font-weight:700;letter-spacing:.5px;color:var(--muted);text-transform:uppercase;margin-bottom:6px;display:block;}
+.f-label span{float:right;font-size:10px;color:var(--light);letter-spacing:0;text-transform:none;}
+.f-select,.f-input{width:100%;border:1.5px solid var(--border);border-radius:var(--rs);padding:12px 14px;font-size:14px;color:var(--text);background:var(--off);outline:none;transition:border-color .2s;margin-bottom:14px;appearance:none;-webkit-appearance:none;}
+.f-select:focus,.f-input:focus{border-color:var(--gold);background:var(--white);}
+.lang-toggle{display:flex;gap:8px;margin-bottom:20px;}
+.lang-btn{flex:1;padding:9px;border:1.5px solid var(--border);border-radius:var(--rs);background:var(--off);color:var(--muted);font-size:13px;font-weight:600;transition:all .2s;}
+.lang-btn.active{border-color:var(--gold);background:var(--gold-light);color:var(--gold-dark);}
+.login-hint{font-size:11px;color:var(--light);text-align:center;margin-top:16px;line-height:1.7;}
+
+/* ══ APP ══ */
+#screen-app{background:var(--surface);}
+.topbar{background:var(--navy);display:flex;align-items:center;justify-content:space-between;padding:0 20px;height:56px;border-bottom:2px solid var(--gold);position:sticky;top:0;z-index:200;flex-shrink:0;}
+.topbar-left{display:flex;align-items:center;gap:12px;min-width:0;}
+.t-logo{font-size:16px;font-weight:800;letter-spacing:3px;color:var(--gold);white-space:nowrap;}
+.t-div{width:1px;height:22px;background:rgba(255,255,255,0.15);flex-shrink:0;}
+.t-branch{font-size:11px;color:rgba(255,255,255,0.7);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:160px;}
+.t-role{font-size:9px;font-weight:700;letter-spacing:.5px;background:var(--gold);color:var(--navy);padding:3px 7px;border-radius:20px;text-transform:uppercase;white-space:nowrap;flex-shrink:0;}
+.t-live{font-size:9px;font-weight:700;background:#1A6B45;color:var(--white);padding:3px 7px;border-radius:20px;white-space:nowrap;flex-shrink:0;animation:livepulse 2s infinite;}
+@keyframes livepulse{0%,100%{opacity:1;}50%{opacity:.5;}}
+.topbar-right{display:flex;align-items:center;gap:8px;flex-shrink:0;}
+.btn-signout{background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.15);color:rgba(255,255,255,0.8);font-size:11px;padding:6px 12px;border-radius:var(--rs);}
+.btn-signout:hover{background:rgba(255,255,255,0.15);}
+
+/* BOTTOM NAV (mobile) */
+.bottom-nav{background:var(--white);border-top:1px solid var(--border);display:none;position:fixed;bottom:0;left:0;right:0;z-index:150;padding:4px 0 8px;}
+.bottom-nav-inner{display:flex;overflow-x:auto;gap:0;padding:0 4px;}
+.bnb{flex:1;min-width:60px;display:flex;flex-direction:column;align-items:center;gap:2px;padding:6px 4px;border:none;background:none;color:var(--light);font-size:9px;font-weight:600;letter-spacing:.3px;text-transform:uppercase;transition:color .2s;white-space:nowrap;}
+.bnb .bnb-icon{font-size:20px;line-height:1;}
+.bnb.active{color:var(--gold-dark);}
+.bnb.active .bnb-icon{filter:drop-shadow(0 0 3px rgba(184,149,42,0.5));}
+
+/* TOP NAV (desktop) */
+.top-nav{background:var(--white);border-bottom:1px solid var(--border);display:flex;padding:0 20px;gap:0;overflow-x:auto;}
+.tnb{padding:13px 15px;font-size:12px;font-weight:600;color:var(--muted);border:none;background:none;cursor:pointer;border-bottom:3px solid transparent;white-space:nowrap;transition:all .2s;margin-bottom:-1px;}
+.tnb:hover{color:var(--text);}
+.tnb.active{color:var(--gold-dark);border-bottom-color:var(--gold);}
+
+.app-body{flex:1;overflow-y:auto;}
+.main{padding:20px;max-width:1280px;margin:0 auto;width:100%;}
+.main.has-bottom-nav{padding-bottom:80px;}
+
+/* PAGE HEADER */
+.ph{margin-bottom:20px;}
+.pt{font-size:20px;font-weight:800;color:var(--navy);}
+.pt-krd{font-size:13px;color:var(--muted);margin-top:2px;font-weight:500;}
+.ps{font-size:12px;color:var(--muted);margin-top:4px;}
+
+/* METRICS */
+.metrics{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:10px;margin-bottom:20px;}
+.metric{background:var(--white);border:1px solid var(--border);border-radius:var(--r);padding:14px 16px;box-shadow:var(--sh);}
+.m-label{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:var(--light);margin-bottom:6px;}
+.m-value{font-size:20px;font-weight:800;color:var(--navy);line-height:1.1;}
+.m-value.gold{color:var(--gold-dark);}
+.m-value.green{color:var(--green);}
+.m-value.red{color:var(--red);}
+.m-value.blue{color:var(--blue);}
+.m-sub{font-size:10px;color:var(--light);margin-top:4px;}
+.m-bar{height:3px;border-radius:2px;background:var(--gold);margin-top:10px;}
+
+/* CARD */
+.card{background:var(--white);border:1px solid var(--border);border-radius:var(--r);padding:18px;margin-bottom:16px;box-shadow:var(--sh);}
+.card-title{font-size:14px;font-weight:700;color:var(--navy);margin-bottom:14px;display:flex;align-items:center;gap:8px;}
+.card-title-krd{font-size:11px;color:var(--muted);font-weight:500;}
+
+/* TABLE */
+.twrap{overflow-x:auto;border-radius:var(--r);border:1px solid var(--border);margin-bottom:16px;}
+table{width:100%;border-collapse:collapse;min-width:550px;}
+thead tr{background:var(--navy);}
+thead th{padding:10px 12px;text-align:left;font-size:10px;font-weight:700;letter-spacing:.5px;text-transform:uppercase;color:rgba(255,255,255,0.75);white-space:nowrap;}
+tbody tr{border-bottom:1px solid var(--border);transition:background .15s;}
+tbody tr:last-child{border-bottom:none;}
+tbody tr:hover{background:var(--off);}
+tbody td{padding:10px 12px;font-size:12px;color:var(--text);}
+.erow td{text-align:center;color:var(--light);padding:28px;font-size:13px;}
+
+/* BADGES */
+.badge{display:inline-block;font-size:10px;font-weight:700;padding:2px 8px;border-radius:20px;white-space:nowrap;}
+.bw{background:var(--blue-bg);color:var(--blue);}
+.bj{background:var(--amber-bg);color:var(--amber);}
+.be{background:var(--green-bg);color:var(--green);}
+.busd{background:#E8F5EE;color:#1A6B45;}
+.biqd{background:#FDF3DC;color:#7A5010;}
+.bcash{background:#F0F0F0;color:#555;}
+.bcard{background:var(--blue-bg);color:var(--blue);}
+.btrans{background:var(--purple-bg);color:var(--purple);}
+.bret{background:var(--red-bg);color:var(--red);}
+
+/* FORM */
+.form-section{margin-bottom:20px;}
+.fgrid{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+.ffull{grid-column:1/-1;}
+.fgroup{display:flex;flex-direction:column;gap:5px;}
+.fgroup label{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:var(--muted);}
+.fgroup label .krd{font-size:10px;color:var(--light);font-weight:400;display:block;letter-spacing:0;text-transform:none;}
+.fgroup input,.fgroup select,.fgroup textarea{border:1.5px solid var(--border);border-radius:var(--rs);padding:11px 13px;font-size:14px;color:var(--text);background:var(--off);outline:none;font-family:inherit;transition:border-color .2s;width:100%;-webkit-appearance:none;}
+.fgroup input:focus,.fgroup select:focus,.fgroup textarea:focus{border-color:var(--gold);background:var(--white);}
+.fgroup textarea{resize:vertical;min-height:80px;}
+.price-row{display:flex;gap:8px;}
+.price-row input{flex:1;}
+.price-row select{width:100px;flex-shrink:0;}
+.factions{display:flex;gap:10px;align-items:center;margin-top:16px;flex-wrap:wrap;}
+.btn-save{background:var(--gold);color:var(--navy);font-size:14px;font-weight:800;padding:13px 28px;border:none;border-radius:var(--rs);text-transform:uppercase;letter-spacing:.5px;transition:all .2s;flex-shrink:0;}
+.btn-save:hover{background:var(--gold-dark);color:var(--white);}
+.btn-save:active{transform:scale(0.97);}
+.btn-save.danger{background:var(--red);color:var(--white);}
+.btn-save.danger:hover{background:#6B1818;}
+.btn-clear{background:var(--off);color:var(--text);font-size:13px;font-weight:600;padding:12px 20px;border:1.5px solid var(--border);border-radius:var(--rs);transition:all .2s;}
+.btn-clear:hover{border-color:var(--gold);color:var(--gold-dark);}
+.btn-sm{font-size:12px;padding:8px 16px;border-radius:var(--rs);border:1.5px solid var(--border);background:var(--off);color:var(--text);transition:all .2s;}
+.btn-sm:hover{border-color:var(--gold);color:var(--gold-dark);}
+
+/* ALERTS */
+.alert{padding:13px 16px;border-radius:var(--rs);font-size:13px;font-weight:600;margin-bottom:14px;display:none;line-height:1.5;}
+.aok{background:var(--green-bg);color:var(--green);border-left:4px solid var(--green);}
+.aerr{background:var(--red-bg);color:var(--red);border-left:4px solid var(--red);}
+.ainfo{background:var(--blue-bg);color:var(--blue);border-left:4px solid var(--blue);display:block;}
+
+/* BRANCH CARDS */
+.bgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px;margin-bottom:20px;}
+.bcard{background:var(--white);border:1px solid var(--border);border-radius:var(--r);padding:16px;box-shadow:var(--sh);}
+.bcard-head{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:12px;}
+.bcard-name{font-size:13px;font-weight:700;color:var(--navy);line-height:1.3;}
+.bcard-city{font-size:11px;color:var(--muted);margin-top:2px;}
+.bcard-icon{font-size:26px;}
+.bstat{display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid var(--border);font-size:12px;}
+.bstat:last-child{border-bottom:none;}
+.bstat-l{color:var(--muted);}
+.bstat-v{font-weight:700;color:var(--text);}
+.bstat-v.green{color:var(--green);}
+
+/* BAR CHART */
+.barchart{display:flex;align-items:flex-end;gap:6px;height:140px;padding:0 2px;}
+.bcol{flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;height:100%;justify-content:flex-end;}
+.bfill{width:100%;border-radius:4px 4px 0 0;min-height:4px;transition:height .4s ease;}
+.blbl{font-size:8px;color:var(--muted);text-align:center;line-height:1.3;}
+.bval{font-size:8px;font-weight:700;color:var(--muted);}
+
+/* REPORT ROWS */
+.reprow{display:flex;justify-content:space-between;align-items:center;padding:13px 16px;border-bottom:1px solid var(--border);}
+.reprow:last-child{border-bottom:none;}
+.reprow.tot{background:var(--navy);}
+.rep-name{font-weight:700;font-size:13px;color:var(--text);}
+.rep-krd{font-size:10px;color:var(--muted);margin-top:2px;}
+.rep-sub{font-size:11px;color:var(--light);margin-top:2px;}
+.rep-amt{font-size:14px;font-weight:800;color:var(--gold-dark);text-align:right;}
+.rep-sub-amt{font-size:10px;color:var(--light);text-align:right;margin-top:2px;}
+.reprow.tot .rep-name{color:var(--white);font-size:14px;}
+.reprow.tot .rep-krd{color:rgba(255,255,255,0.4);}
+.reprow.tot .rep-sub{color:rgba(255,255,255,0.4);}
+.reprow.tot .rep-amt{color:var(--gold);font-size:20px;}
+
+/* PAYMENT CARDS */
+.paygrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:10px;margin-bottom:16px;}
+.paycard{border-radius:var(--r);padding:16px;text-align:center;border:1px solid var(--border);}
+.paycard.cash{background:#F5F5F5;}
+.paycard.visa{background:var(--blue-bg);}
+.paycard.trans{background:var(--purple-bg);}
+.pay-icon{font-size:26px;margin-bottom:6px;}
+.pay-label{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:var(--muted);margin-bottom:5px;}
+.pay-value{font-size:18px;font-weight:800;color:var(--navy);}
+.pay-count{font-size:10px;color:var(--muted);margin-top:3px;}
+
+/* SECTION DIVIDER */
+.sdiv{font-size:11px;font-weight:800;color:var(--navy);text-transform:uppercase;letter-spacing:1.5px;padding:10px 0 8px;border-bottom:2px solid var(--gold);margin-bottom:14px;margin-top:6px;display:flex;align-items:center;gap:8px;}
+
+/* YEARLY TABLE */
+.yt thead tr{background:var(--navy-mid);}
+.yt tbody td{font-size:11px;}
+.yt .yr-total{background:var(--gold-light);font-weight:700;}
+
+/* EXPENSE TABLE */
+.exp-table td{vertical-align:top;}
+
+/* SPINNER */
+.spinner{text-align:center;padding:40px;color:var(--muted);font-size:13px;}
+
+/* MONTH SELECTOR */
+.month-bar{display:flex;align-items:center;gap:10px;margin-bottom:18px;flex-wrap:wrap;}
+.month-select{border:1.5px solid var(--border);border-radius:var(--rs);padding:9px 12px;font-size:13px;background:var(--white);outline:none;-webkit-appearance:none;color:var(--text);}
+.month-select:focus{border-color:var(--gold);}
+
+/* MOBILE CARD VIEW for sales on small screens */
+.sale-cards{display:none;}
+.sale-card{background:var(--white);border:1px solid var(--border);border-radius:var(--r);padding:14px;margin-bottom:10px;box-shadow:var(--sh);}
+.sc-top{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:8px;}
+.sc-brand{font-size:15px;font-weight:700;color:var(--navy);}
+.sc-total{font-size:16px;font-weight:800;color:var(--green);}
+.sc-row{display:flex;justify-content:space-between;font-size:12px;color:var(--muted);margin-top:4px;}
+.sc-row span:last-child{color:var(--text);font-weight:600;}
+
+/* ══ RESPONSIVE ══ */
+@media(max-width:700px){
+  .top-nav{display:none;}
+  .bottom-nav{display:block;}
+  .fgrid{grid-template-columns:1fr;}
+  .metrics{grid-template-columns:1fr 1fr;}
+  .t-branch{max-width:110px;}
+  table{min-width:500px;}
+  .twrap{display:none;}
+  .sale-cards{display:block;}
+  .main{padding:14px;}
+  .pt{font-size:18px;}
+  .m-value{font-size:18px;}
+}
+@media(min-width:701px){
+  .bottom-nav{display:none!important;}
+  .top-nav{display:flex;}
+}
+@media print{
+  .topbar,.top-nav,.bottom-nav,.factions,.btn-sm,.btn-clear{display:none!important;}
+  .main{padding:0;padding-bottom:0!important;}
+  .screen{min-height:auto;}
+}
+</style>
+</head>
+<body>
+
+<!-- ══════════════ SETUP SCREEN ══════════════ -->
+<div id="screen-setup" class="screen" style="display:none!important;"></div>
+
+<!-- ══════════════ LOGIN SCREEN ══════════════ -->
+<div id="screen-login" class="screen">
+  <div class="login-box">
+    <div class="brand-header">
+      <div class="brand-logo">TISSOT CO.</div>
+      <div class="brand-sub">Live Sales System 2026</div>
+    </div>
+    <div class="login-body">
+      <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:4px;">
+        <div>
+          <div class="login-title" id="lt-en">Sign in to your branch</div>
+          <div class="login-title hidden" id="lt-krd" style="font-size:15px;">چوونە ژوورەوەی لقەکەت</div>
+        </div>
+        <div class="lang-toggle" style="margin-bottom:0;gap:6px;">
+          <button class="lang-btn active" id="lb-en" onclick="setLang('en')">EN</button>
+          <button class="lang-btn" id="lb-krd" onclick="setLang('krd')">کوردی</button>
+        </div>
+      </div>
+      <div class="login-sub-title" id="ls-en">Select your branch and enter your password</div>
+      <div class="login-sub-title hidden" id="ls-krd">لقەکەت هەڵبژێرە و وشەی نهێنیت بنووسە</div>
+
+      <div style="height:18px;"></div>
+      <label class="f-label" id="ll-branch">Branch <span id="ll-branch-krd" style="display:none;">/ لق</span></label>
+      <select class="f-select" id="sel-branch">
+        <option value="">— Select / هەڵبژاردن —</option>
+        <optgroup label="Sulaimaniyah / سلێمانی">
+          <option value="slm_family">Sulaimaniyah — Family Mall Branch</option>
+          <option value="slm_majidi">Sulaimaniyah — Majidi Mall Branch</option>
+        </optgroup>
+        <optgroup label="Duhok / دهۆک">
+          <option value="dhk_watch">Duhok — Watch Branch</option>
+          <option value="dhk_sun">Duhok — Sunglass Branch</option>
+        </optgroup>
+        <optgroup label="Erbil / هەولێر">
+          <option value="erb_family">Erbil — Family Mall Branch</option>
+          <option value="erb_down">Erbil — Downtown Branch</option>
+        </optgroup>
+        <optgroup label="Management / بەڕێوەبەری">
+          <option value="manager">Manager — Niven (Full Access)</option>
+        </optgroup>
+      </select>
+
+      <label class="f-label" id="ll-pw">Password <span id="ll-pw-krd" style="display:none;">/ وشەی نهێنی</span></label>
+      <input class="f-input" type="password" id="inp-pw" placeholder="Enter password / وشەی نهێنی" onkeydown="if(event.key==='Enter')doLogin()"/>
+
+      <button class="btn-primary" onclick="doLogin()" id="btn-login-text">Sign In / چوونەژوورەوە</button>
+      <div class="msg msg-err" id="login-err">Incorrect password — وشەی نهێنی هەڵەیە</div>
+      <div class="login-hint">Each branch has its own private password.<br>کڕیارەکانی هەر لقێک وشەی نهێنی تایبەتی خۆیانی هەیە.<br>Contact Manager Niven if you need access.</div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════ APP SCREEN ══════════════ -->
+<div id="screen-app" class="screen">
+  <!-- TOP BAR -->
+  <div class="topbar">
+    <div class="topbar-left">
+      <div class="t-logo">TISSOT</div>
+      <div class="t-div"></div>
+      <div class="t-branch" id="tb-branch"></div>
+      <div class="t-role" id="tb-role">Staff</div>
+      <div class="t-live">🔴 LIVE</div>
+    </div>
+    <div class="topbar-right">
+      <button class="btn-signout" onclick="doLogout()">↩ Out</button>
+    </div>
+  </div>
+
+  <!-- DESKTOP NAV -->
+  <nav class="top-nav" id="top-nav"></nav>
+
+  <!-- APP BODY -->
+  <div class="app-body">
+    <div class="main" id="main-content"></div>
+  </div>
+
+  <!-- MOBILE BOTTOM NAV -->
+  <nav class="bottom-nav" id="bottom-nav"></nav>
+</div>
+
+<script>
+// ══════════════════════════════════════════════
+// CONFIG
+// ══════════════════════════════════════════════
+const BRANCHES = {
+  slm_family:{ name:'Family Mall',  fullName:'Family Mall Branch', city:'Sulaimaniyah', krd:'سلێمانی — فامیلی مۆڵ', pw:'SLM@FamilyMall#2026', icon:'🏬' },
+  slm_majidi:{ name:'Majidi Mall',  fullName:'Majidi Mall Branch', city:'Sulaimaniyah', krd:'سلێمانی — ماجیدی مۆڵ', pw:'SLM@MajidiMall#2026', icon:'🛍️' },
+  dhk_watch: { name:'Watch',        fullName:'Watch Branch',       city:'Duhok',        krd:'دهۆک — لقی کاتژمێر',  pw:'DHK@WatchShop#2026', icon:'⌚' },
+  dhk_sun:   { name:'Sunglass',     fullName:'Sunglass Branch',    city:'Duhok',        krd:'دهۆک — لقی عەینک',    pw:'DHK@Sunglass#2026',  icon:'🕶' },
+  erb_family:{ name:'Family Mall',  fullName:'Family Mall Branch', city:'Erbil',        krd:'هەولێر — فامیلی مۆڵ', pw:'ERB@FamilyMall#2026', icon:'🏪' },
+  erb_down:  { name:'Downtown',     fullName:'Downtown Branch',    city:'Erbil',        krd:'هەولێر — داونتاون',   pw:'ERB@Downtown#2026',   icon:'🌆' },
+  manager:   { name:'Manager',      fullName:'Manager',            city:'HQ',           krd:'بەڕێوەبەر',           pw:'TISSOT@Niven2026!',   icon:'👔' }
+};
+const BRANDS=['Tissot','Longines','Omega','Rolex','TAG Heuer','Seiko','Casio','Citizen','Fossil','Ray-Ban','Oakley','Police','Versace','Emporio Armani','Gucci','Prada','Pandora','Swarovski','Michael Kors','Calvin Klein','Other'];
+const EXPENSE_CATS=['Rent / کرێ','Salaries / مووچە','Electricity / کارەبا','Internet & Phone / ئینتەرنێت','Cleaning / پاکردنەوە','Packaging / پاکێجکردن','Marketing / بازاڕکاری','Transportation / گواستنەوە','Maintenance / چاکردنەوە','Miscellaneous / جۆراوجۆر'];
+const MONTHS=['January','February','March','April','May','June','July','August','September','October','November','December'];
+const MONTHS_KRD=['کانوونی دووەم','شوبات','ئازار','نیسان','مایس','حوزەیران','تەممووز','ئاب','ئەیلوول','تشرینی یەکەم','تشرینی دووەم','کانوونی یەکەم'];
+const IQD=1310;
+
+let SB_URL='https://gulclhclkxniatcrvrvq.supabase.co',SB_KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imd1bGNsaGNsa3huaWF0Y3J2cnZxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODEzNjQ0MzAsImV4cCI6MjA5Njk0MDQzMH0.b9NC7DZWn2B0FyM1ddcAlS6f_Bn7YZv6kgBRKQ-z7iQ',CU=null,activeTab='',appLang='en';
+
+// ══════════════════════════════════════════════
+// SETUP
+// ══════════════════════════════════════════════
+function copySQL(){
+  const t=document.getElementById('sql-text').textContent;
+  navigator.clipboard.writeText(t).then(()=>alert('✅ SQL copied! Now paste it in Supabase SQL Editor and click RUN ▶'));
+}
+function saveSetup(){
+  const url=(document.getElementById('sb-url').value||'').trim().replace(/\/$/,'');
+  const key=(document.getElementById('sb-key').value||'').trim();
+  hide('setup-err');hide('setup-ok');
+  if(!url||!key){show('setup-err');return;}
+  localStorage.setItem('tc_url',url);localStorage.setItem('tc_key',key);
+  SB_URL=url;SB_KEY=key;
+  show('setup-ok');
+  setTimeout(()=>{switchScreen('login');},1500);
+}
+
+// ══════════════════════════════════════════════
+// DB
+// ══════════════════════════════════════════════
+async function dbGet(table,qs=''){
+  const r=await fetch(`${SB_URL}/rest/v1/${table}?order=created_at.desc&limit=2000${qs}`,{headers:{apikey:SB_KEY,Authorization:'Bearer '+SB_KEY}});
+  if(!r.ok)throw new Error('DB error: '+await r.text());
+  return r.json();
+}
+async function dbInsert(table,data){
+  const r=await fetch(`${SB_URL}/rest/v1/${table}`,{method:'POST',headers:{apikey:SB_KEY,Authorization:'Bearer '+SB_KEY,'Content-Type':'application/json',Prefer:'return=representation'},body:JSON.stringify(data)});
+  if(!r.ok)throw new Error('Save failed: '+await r.text());
+  return r.json();
+}
+
+// ══════════════════════════════════════════════
+// UTILS
+// ══════════════════════════════════════════════
+function switchScreen(id){
+  // Hide all screens
+  ['setup','login','app'].forEach(function(name){
+    var el=document.getElementById('screen-'+name);
+    if(el){el.style.display='none';el.classList.remove('active');}
+  });
+  // Show target screen
+  var target=document.getElementById('screen-'+id);
+  if(target){
+    target.style.display='flex';
+    target.classList.add('active');
+    // Force Safari iOS to rerender
+    target.style.webkitTransform='translateZ(0)';
+    setTimeout(function(){target.style.webkitTransform='';},100);
+  }
+}
+function show(id){const e=document.getElementById(id);if(e)e.style.display='block';}
+function hide(id){const e=document.getElementById(id);if(e)e.style.display='none';}
+function el(id){return document.getElementById(id);}
+function val(id){return(el(id)?.value||'').trim();}
+function bFull(id){const b=BRANCHES[id];return b?b.city+' — '+b.fullName:id;}
+function bKrd(id){const b=BRANCHES[id];return b?b.krd:id;}
+function today(){return new Date().toISOString().slice(0,10);}
+function curMonth(){return new Date().toISOString().slice(0,7);}
+function toUSD(a,c){return(!c||c==='USD')?+a:(+a/IQD);}
+function fU(n){return '$'+Math.round(n||0).toLocaleString();}
+function fmtAmt(a,c){return(!c||c==='USD')?'$'+Number(a||0).toLocaleString('en-US',{minimumFractionDigits:0,maximumFractionDigits:0}):Number(a||0).toLocaleString('en-IQ')+' IQD';}
+function catBadge(c){return c==='Watch'?`<span class="badge bw">⌚ Watch</span>`:c==='Jewelry'?`<span class="badge bj">💍 Jewelry</span>`:`<span class="badge be">🕶 Eyewear</span>`;}
+function curBadge(c){return c==='IQD'?`<span class="badge biqd">IQD</span>`:`<span class="badge busd">USD</span>`;}
+function payBadge(p){return p==='Cash'?`<span class="badge bcash">💵 Cash</span>`:p==='Visa Card'?`<span class="badge bcard">💳 Visa</span>`:p==='Transfer'?`<span class="badge btrans">🏦 Transfer</span>`:`<span class="badge">${p||'—'}</span>`;}
+function spinner(){return '<div class="spinner">⏳ Loading live data...</div>';}
+
+// ══════════════════════════════════════════════
+// LANGUAGE
+// ══════════════════════════════════════════════
+function setLang(l){
+  appLang=l;
+  document.getElementById('lb-en').classList.toggle('active',l==='en');
+  document.getElementById('lb-krd').classList.toggle('active',l==='krd');
+  ['lt-en','ls-en'].forEach(id=>document.getElementById(id).classList.toggle('hidden',l==='krd'));
+  ['lt-krd','ls-krd'].forEach(id=>document.getElementById(id).classList.toggle('hidden',l==='en'));
+  document.getElementById('ll-branch-krd').style.display=l==='krd'?'inline':'none';
+  document.getElementById('ll-pw-krd').style.display=l==='krd'?'inline':'none';
+}
+
+// ══════════════════════════════════════════════
+// AUTH
+// ══════════════════════════════════════════════
+// Boot — force login screen on every device and browser
+function bootApp(){
+  // Hide setup completely
+  var setup = document.getElementById('screen-setup');
+  if(setup){ setup.style.display='none'; setup.className='screen'; }
+  // Show login
+  var login = document.getElementById('screen-login');
+  if(login){ login.style.display='flex'; login.className='screen active'; }
+  // Hide app
+  var app = document.getElementById('screen-app');
+  if(app){ app.style.display='none'; app.className='screen'; }
+}
+// Run on every possible event to catch all browsers including Safari iOS
+document.addEventListener('DOMContentLoaded', bootApp);
+window.addEventListener('load', bootApp);
+bootApp();
+
+function doLogin(){
+  const b=val('sel-branch'), pw=el('inp-pw').value;
+  hide('login-err');
+  if(!b){show('login-err');el('login-err').textContent='Please select your branch / لقەکەت هەڵبژێرە';return;}
+  if(!pw||pw!==BRANCHES[b].pw){show('login-err');el('login-err').textContent='Incorrect password — وشەی نهێنی هەڵەیە';return;}
+  CU=b;
+  switchScreen('app');
+  el('tb-branch').textContent=BRANCHES[b].city+' — '+BRANCHES[b].fullName;
+  el('tb-role').textContent=b==='manager'?'Manager':'Staff';
+  buildNav();
+  showTab(b==='manager'?'overview':'log');
+}
+function doLogout(){
+  CU=null;switchScreen('login');
+  el('inp-pw').value='';el('sel-branch').value='';
+}
+
+// ══════════════════════════════════════════════
+// NAV
+// ══════════════════════════════════════════════
+const MANAGER_TABS=[
+  {id:'overview', icon:'📊', en:'Overview',    krd:'گشتی'},
+  {id:'all',      icon:'📋', en:'All Sales',   krd:'فرۆشتنەکان'},
+  {id:'branches', icon:'🏪', en:'Branches',    krd:'لقەکان'},
+  {id:'monthly',  icon:'📅', en:'Monthly',     krd:'مانگانە'},
+  {id:'yearly',   icon:'📈', en:'Yearly',      krd:'ساڵانە'},
+  {id:'payments', icon:'💳', en:'Payments',    krd:'پارەدان'},
+  {id:'expenses', icon:'💸', en:'Expenses',    krd:'خەرجی'},
+  {id:'returns',  icon:'↩',  en:'Returns',     krd:'گەڕاندنەوە'},
+  {id:'summaries',icon:'📝', en:'Summaries',   krd:'کورتەکان'},
+];
+const STAFF_TABS=[
+  {id:'log',      icon:'➕', en:'Log Sale',    krd:'تۆمارکردن'},
+  {id:'today',    icon:'📋', en:'Today Sales', krd:'فرۆشتنی ئەمرۆ'},
+  {id:'expenses', icon:'💸', en:'Expenses',    krd:'خەرجی'},
+  {id:'returns',  icon:'↩',  en:'Return',      krd:'گەڕاندنەوە'},
+  {id:'summaries',icon:'📝', en:'Month Report',krd:'ڕاپۆرتی مانگ'},
+];
+function buildNav(){
+  const isM=CU==='manager';
+  const tabs=isM?MANAGER_TABS:STAFF_TABS;
+  const tNav=el('top-nav'), bNav=el('bottom-nav');
+  tNav.innerHTML=tabs.map(t=>`<button class="tnb${activeTab===t.id?' active':''}" onclick="showTab('${t.id}')">${t.icon} ${t.en}</button>`).join('');
+  bNav.innerHTML='<div class="bottom-nav-inner">'+tabs.map(t=>`<button class="bnb${activeTab===t.id?' active':''}" onclick="showTab('${t.id}')"><span class="bnb-icon">${t.icon}</span>${appLang==='krd'?t.krd:t.en}</button>`).join('')+'</div>';
+  const mc=el('main-content');
+  mc.className='main'+(window.innerWidth<=700?' has-bottom-nav':'');
+}
+
+function showTab(tab){
+  activeTab=tab;buildNav();
+  const mc=el('main-content');
+  mc.innerHTML=spinner();
+  if(tab==='overview') renderOverview();
+  else if(tab==='all') renderAllSales();
+  else if(tab==='branches') renderBranches();
+  else if(tab==='monthly') renderMonthly();
+  else if(tab==='yearly') renderYearly();
+  else if(tab==='payments') renderPayments();
+  else if(tab==='expenses') renderExpenses();
+  else if(tab==='log') renderLogSale();
+  else if(tab==='today') renderTodaySales();
+  else if(tab==='returns') renderReturns();
+  else if(tab==='summaries') renderSummaries();
+}
+
+// ══════════════════════════════════════════════
+// SALE ROWS (table + mobile cards)
+// ══════════════════════════════════════════════
+function salesTable(list){
+  if(!list||!list.length) return `<div class="twrap"><table><thead><tr><th>Date</th><th>Branch</th><th>Brand</th><th>Cat</th><th>Qty</th><th>Unit Price</th><th>Total</th><th>Payment</th><th>Staff</th><th>Note</th></tr></thead><tbody><tr class="erow"><td colspan="10">No records found.</td></tr></tbody></table></div>`;
+  const rows=list.map(r=>{
+    const tot=r.qty*r.price,isR=r.is_return;
+    return `<tr style="${isR?'background:#fff5f5;':''}">
+      <td style="white-space:nowrap;">${r.date}</td>
+      <td style="font-size:11px;max-width:120px;white-space:normal;">${bFull(r.branch)}</td>
+      <td><strong>${r.brand||'—'}</strong>${r.model?`<br><span style="font-size:10px;color:var(--muted);">${r.model}</span>`:''}</td>
+      <td>${catBadge(r.category)}</td>
+      <td style="text-align:center;font-weight:700;">${r.qty}</td>
+      <td>${fmtAmt(r.price,r.currency)} ${curBadge(r.currency||'USD')}</td>
+      <td style="${isR?'color:var(--red);':'color:var(--green);'}font-weight:800;">${isR?'↩ -':''}${fmtAmt(tot,r.currency)}</td>
+      <td>${payBadge(r.payment)}</td>
+      <td style="font-size:11px;">${r.staff||'—'}</td>
+      <td style="font-size:11px;max-width:120px;white-space:normal;color:var(--muted);">${r.note||''}</td>
+    </tr>`;
+  }).join('');
+  return `<div class="twrap"><table><thead><tr><th>Date</th><th>Branch</th><th>Brand</th><th>Cat</th><th>Qty</th><th>Unit Price</th><th>Total</th><th>Payment</th><th>Staff</th><th>Note</th></tr></thead><tbody>${rows}</tbody></table></div>`;
+}
+function salesCards(list){
+  if(!list||!list.length) return `<div class="sale-card" style="text-align:center;color:var(--light);">No records found / هیچ تۆمارێک نییە</div>`;
+  return list.map(r=>{
+    const tot=r.qty*r.price,isR=r.is_return;
+    return `<div class="sale-card" style="${isR?'border-color:#ECC;':''}">
+      <div class="sc-top">
+        <div><div class="sc-brand">${r.brand||'—'}${isR?' ↩':''}</div><div style="font-size:11px;color:var(--muted);margin-top:2px;">${catBadge(r.category)} ${curBadge(r.currency||'USD')}</div></div>
+        <div class="sc-total" style="${isR?'color:var(--red);':''}">${isR?'-':''}${fmtAmt(tot,r.currency)}</div>
+      </div>
+      <div class="sc-row"><span>Date / بەروار</span><span>${r.date}</span></div>
+      <div class="sc-row"><span>Qty / ژمارە</span><span>${r.qty} × ${fmtAmt(r.price,r.currency)}</span></div>
+      <div class="sc-row"><span>Payment / پارەدان</span><span>${payBadge(r.payment)}</span></div>
+      <div class="sc-row"><span>Staff / خەڵکی</span><span>${r.staff||'—'}</span></div>
+      ${r.note?`<div class="sc-row"><span>Note</span><span style="font-size:11px;color:var(--muted);">${r.note}</span></div>`:''}
+    </div>`;
+  }).join('');
+}
+function salesDisplay(list){return salesTable(list)+`<div class="sale-cards">${salesCards(list)}</div>`;}
+
+// ══════════════════════════════════════════════
+// OVERVIEW
+// ══════════════════════════════════════════════
+async function renderOverview(){
+  try{
+    const [allS,allE]=await Promise.all([dbGet('sales'),dbGet('expenses')]);
+    const sales=allS.filter(r=>!r.is_return),rets=allS.filter(r=>r.is_return);
+    const gUSD=sales.reduce((s,r)=>s+toUSD(r.qty*r.price,r.currency),0);
+    const rUSD=rets.reduce((s,r)=>s+toUSD(r.qty*r.price,r.currency),0);
+    const eUSD=allE.reduce((s,e)=>s+toUSD(e.amount,e.currency),0);
+    const nUSD=gUSD-rUSD-eUSD;
+    const todUSD=sales.filter(r=>r.date===today()).reduce((s,r)=>s+toUSD(r.qty*r.price,r.currency),0);
+    const monUSD=sales.filter(r=>r.date?.startsWith(curMonth())).reduce((s,r)=>s+toUSD(r.qty*r.price,r.currency),0);
+    const watchUSD=sales.filter(r=>r.category==='Watch').reduce((s,r)=>s+toUSD(r.qty*r.price,r.currency),0);
+    const jewUSD=sales.filter(r=>r.category==='Jewelry').reduce((s,r)=>s+toUSD(r.qty*r.price,r.currency),0);
+    const eyeUSD=sales.filter(r=>r.category==='Eyewear').reduce((s,r)=>s+toUSD(r.qty*r.price,r.currency),0);
+    const bkeys=Object.keys(BRANCHES).filter(k=>k!=='manager');
+    const byB={}; bkeys.forEach(k=>byB[k]=0);
+    sales.forEach(r=>{byB[r.branch]=(byB[r.branch]||0)+toUSD(r.qty*r.price,r.currency);});
+    const maxV=Math.max(...Object.values(byB),1);
+    const colors=['#B8952A','#1A4B8B','#1A6B45','#7A5010','#5B3FA0','#8B4513'];
+    const bars=bkeys.map((k,i)=>{
+      const h=Math.max(Math.round((byB[k]/maxV)*100),2);
+      return `<div class="bcol"><div class="bval">${byB[k]>0?'$'+Math.round(byB[k]/1000)+'k':''}</div><div class="bfill" style="height:${h}%;background:${colors[i]};"></div><div class="blbl">${BRANCHES[k].city.slice(0,3)}·${BRANCHES[k].name.slice(0,4)}</div></div>`;
+    }).join('');
+    el('main-content').innerHTML=`
+    <div class="ph"><div class="pt">📊 Overview <span style="font-size:13px;color:var(--gold-dark);">گشتی</span></div><div class="ps">Live data — all 6 branches — ${new Date().toLocaleDateString('en-GB',{weekday:'long',day:'numeric',month:'long',year:'numeric'})}</div></div>
+    <div class="metrics">
+      <div class="metric"><div class="m-label">Net Revenue / داهات</div><div class="m-value gold">${fU(nUSD)}</div><div class="m-sub">After returns & expenses</div><div class="m-bar"></div></div>
+      <div class="metric"><div class="m-label">Gross Sales / فرۆشتن</div><div class="m-value">${fU(gUSD)}</div><div class="m-sub">${sales.length} transactions</div></div>
+      <div class="metric"><div class="m-label">Today / ئەمرۆ</div><div class="m-value green">${fU(todUSD)}</div><div class="m-sub">${sales.filter(r=>r.date===today()).length} sales</div></div>
+      <div class="metric"><div class="m-label">This Month / ئەم مانگە</div><div class="m-value">${fU(monUSD)}</div><div class="m-sub">${sales.filter(r=>r.date?.startsWith(curMonth())).length} sales</div></div>
+      <div class="metric"><div class="m-label">⌚ Watches</div><div class="m-value blue">${fU(watchUSD)}</div></div>
+      <div class="metric"><div class="m-label">💍 Jewelry</div><div class="m-value blue">${fU(jewUSD)}</div></div>
+      <div class="metric"><div class="m-label">🕶 Eyewear</div><div class="m-value blue">${fU(eyeUSD)}</div></div>
+      <div class="metric"><div class="m-label">Returns / گەڕاندنەوە</div><div class="m-value red">-${fU(rUSD)}</div></div>
+      <div class="metric"><div class="m-label">Expenses / خەرجی</div><div class="m-value red">-${fU(eUSD)}</div></div>
+    </div>
+    <div class="card"><div class="card-title">📊 Revenue by Branch / داهاتی لقەکان</div><div class="barchart">${bars}</div></div>
+    <div class="card"><div class="card-title">🔴 Live Feed — Latest Transactions</div>${salesDisplay(allS.slice(0,15))}</div>`;
+  }catch(e){el('main-content').innerHTML=`<div class="alert aerr" style="display:block;">❌ ${e.message}</div>`;}
+}
+
+// ══════════════════════════════════════════════
+// ALL SALES
+// ══════════════════════════════════════════════
+async function renderAllSales(){
+  try{
+    const all=await dbGet('sales');
+    const tUSD=all.filter(r=>!r.is_return).reduce((s,r)=>s+toUSD(r.qty*r.price,r.currency),0);
+    el('main-content').innerHTML=`
+    <div class="ph"><div class="pt">📋 All Sales / هەموو فرۆشتنەکان</div><div class="ps">${all.length} total records — all 6 branches</div></div>
+    <div class="metrics" style="grid-template-columns:repeat(auto-fit,minmax(130px,1fr));margin-bottom:16px;">
+      <div class="metric"><div class="m-label">Records</div><div class="m-value">${all.length}</div></div>
+      <div class="metric"><div class="m-label">Net Revenue</div><div class="m-value gold">${fU(tUSD)}</div></div>
+    </div>
+    ${salesDisplay(all)}`;
+  }catch(e){el('main-content').innerHTML=`<div class="alert aerr" style="display:block;">❌ ${e.message}</div>`;}
+}
+
+// ══════════════════════════════════════════════
+// BRANCHES
+// ══════════════════════════════════════════════
+async function renderBranches(){
+  try{
+    const sales=(await dbGet('sales')).filter(r=>!r.is_return);
+    const bkeys=Object.keys(BRANCHES).filter(k=>k!=='manager');
+    const cards=bkeys.map(k=>{
+      const bs=sales.filter(r=>r.branch===k);
+      const rev=bs.reduce((s,r)=>s+toUSD(r.qty*r.price,r.currency),0);
+      const tR=bs.filter(r=>r.date===today()).reduce((s,r)=>s+toUSD(r.qty*r.price,r.currency),0);
+      const mR=bs.filter(r=>r.date?.startsWith(curMonth())).reduce((s,r)=>s+toUSD(r.qty*r.price,r.currency),0);
+      const brands={};bs.forEach(r=>{brands[r.brand]=(brands[r.brand]||0)+1;});
+      const topB=Object.entries(brands).sort((a,b)=>b[1]-a[1])[0];
+      return `<div class="bcard">
+        <div class="bcard-head"><div><div class="bcard-name">${BRANCHES[k].fullName}</div><div class="bcard-city">📍 ${BRANCHES[k].city}<br><span style="font-size:10px;color:var(--light);">${BRANCHES[k].krd}</span></div></div><div class="bcard-icon">${BRANCHES[k].icon}</div></div>
+        <div class="bstat"><span class="bstat-l">Total revenue</span><span class="bstat-v green">${fU(rev)}</span></div>
+        <div class="bstat"><span class="bstat-l">Today / ئەمرۆ</span><span class="bstat-v">${fU(tR)}</span></div>
+        <div class="bstat"><span class="bstat-l">This month</span><span class="bstat-v">${fU(mR)}</span></div>
+        <div class="bstat"><span class="bstat-l">Transactions</span><span class="bstat-v">${bs.length}</span></div>
+        <div class="bstat"><span class="bstat-l">Top brand</span><span class="bstat-v">${topB?topB[0]:'—'}</span></div>
+      </div>`;
+    }).join('');
+    el('main-content').innerHTML=`<div class="ph"><div class="pt">🏪 Branch Performance / لقەکان</div></div><div class="bgrid">${cards}</div>`;
+  }catch(e){el('main-content').innerHTML=`<div class="alert aerr" style="display:block;">❌ ${e.message}</div>`;}
+}
+
+// ══════════════════════════════════════════════
+// MONTHLY
+// ══════════════════════════════════════════════
+function renderMonthly(){
+  const now=new Date();let opts='';
+  for(let y=2025;y<=2026;y++) for(let m=1;m<=12;m++){
+    const v=`${y}-${String(m).padStart(2,'0')}`;
+    const sel=(y===now.getFullYear()&&m===(now.getMonth()+1))?'selected':'';
+    opts+=`<option value="${v}" ${sel}>${MONTHS[m-1]} ${y} / ${MONTHS_KRD[m-1]}</option>`;
+  }
+  el('main-content').innerHTML=`
+  <div class="ph"><div class="pt">📅 Monthly Report / ڕاپۆرتی مانگانە</div><div class="ps">Revenue + expenses + returns per branch</div></div>
+  <div class="month-bar">
+    <select class="month-select" id="mon-sel" onchange="loadMonthly()">${opts}</select>
+    <button class="btn-sm" onclick="window.print()">🖨️ Print</button>
+  </div>
+  <div id="mon-body">${spinner()}</div>`;
+  loadMonthly();
+}
+async function loadMonthly(){
+  const m=el('mon-sel').value;
+  const label=new Date(m+'-01').toLocaleDateString('en-US',{month:'long',year:'numeric'});
+  const mKrd=MONTHS_KRD[parseInt(m.split('-')[1])-1]+' '+m.split('-')[0];
+  try{
+    const [allS,allE]=await Promise.all([dbGet('sales',`&date=gte.${m}-01&date=lte.${m}-31`),dbGet('expenses',`&date=gte.${m}-01&date=lte.${m}-31`)]);
+    const sales=allS.filter(r=>!r.is_return),rets=allS.filter(r=>r.is_return);
+    const bkeys=Object.keys(BRANCHES).filter(k=>k!=='manager');
+    const byB={};bkeys.forEach(k=>byB[k]={s:0,r:0,e:0,cnt:0});
+    sales.forEach(r=>{byB[r.branch].s+=toUSD(r.qty*r.price,r.currency);byB[r.branch].cnt++;});
+    rets.forEach(r=>{byB[r.branch].r+=toUSD(r.qty*r.price,r.currency);});
+    allE.forEach(e=>{if(byB[e.branch])byB[e.branch].e+=toUSD(e.amount,e.currency);});
+    const tG=bkeys.reduce((s,k)=>s+byB[k].s,0);
+    const tR=bkeys.reduce((s,k)=>s+byB[k].r,0);
+    const tE=bkeys.reduce((s,k)=>s+byB[k].e,0);
+    const tN=tG-tR-tE;
+    const rows=bkeys.map(k=>{
+      const d=byB[k],net=d.s-d.r-d.e;
+      return `<div class="reprow">
+        <div><div class="rep-name">${bFull(k)}</div><div class="rep-krd">${bKrd(k)}</div>
+        <div class="rep-sub">${d.cnt} sales${d.r>0?' · Returns: -'+fU(d.r):''}${d.e>0?' · Exp: -'+fU(d.e):''}</div></div>
+        <div><div class="rep-amt">${fU(net)}</div><div class="rep-sub-amt">gross ${fU(d.s)}</div></div>
+      </div>`;
+    }).join('');
+    // expense detail
+    const expCatRows=EXPENSE_CATS.map(cat=>{
+      const ce=allE.filter(e=>e.category===cat);
+      const cv=ce.reduce((s,e)=>s+toUSD(e.amount,e.currency),0);
+      if(!cv)return'';
+      return `<div class="reprow"><div><div class="rep-name">${cat}</div><div class="rep-sub">${ce.length} entries</div></div><div class="rep-amt" style="color:var(--red);">-${fU(cv)}</div></div>`;
+    }).join('');
+    const expRows=allE.length?allE.map(e=>`<tr><td>${e.date}</td><td style="font-size:11px;">${bFull(e.branch)}</td><td>${e.category}</td><td style="max-width:180px;white-space:normal;font-size:11px;">${e.description||'—'}</td><td style="color:var(--red);font-weight:700;">${fmtAmt(e.amount,e.currency)}</td><td>${payBadge(e.payment)}</td><td style="font-size:11px;">${e.staff||'—'}</td></tr>`).join(''):`<tr class="erow"><td colspan="7">No expenses for this month.</td></tr>`;
+    el('mon-body').innerHTML=`
+    <div class="metrics">
+      <div class="metric"><div class="m-label">Gross Revenue</div><div class="m-value gold">${fU(tG)}</div></div>
+      <div class="metric"><div class="m-label">Returns</div><div class="m-value red">-${fU(tR)}</div></div>
+      <div class="metric"><div class="m-label">Expenses</div><div class="m-value red">-${fU(tE)}</div></div>
+      <div class="metric"><div class="m-label">Net Income / داهات</div><div class="m-value green">${fU(tN)}</div></div>
+    </div>
+    <div class="sdiv">Revenue by Branch / داهاتی لقەکان</div>
+    <div class="card" style="padding:0;overflow:hidden;">${rows}
+    <div class="reprow tot"><div><div class="rep-name">TOTAL — All 6 Branches</div><div class="rep-krd">کۆی گشتی — هەموو ٦ لق</div><div class="rep-sub">${label} / ${mKrd}</div></div><div class="rep-amt">${fU(tN)}</div></div></div>
+    <div class="sdiv">Monthly Expenses by Category / خەرجیەکان</div>
+    <div class="card" style="padding:0;overflow:hidden;">${expCatRows||'<div class="reprow"><div class="rep-sub">No expenses logged for this month.</div></div>'}</div>
+    <div class="sdiv">All Expense Entries / تەواوی خەرجیەکان</div>
+    <div class="twrap"><table><thead><tr><th>Date</th><th>Branch</th><th>Category</th><th>Description</th><th>Amount</th><th>Payment</th><th>Staff</th></tr></thead><tbody>${expRows}</tbody></table></div>`;
+  }catch(e){el('mon-body').innerHTML=`<div class="alert aerr" style="display:block;">❌ ${e.message}</div>`;}
+}
+
+// ══════════════════════════════════════════════
+// YEARLY
+// ══════════════════════════════════════════════
+async function renderYearly(){
+  try{
+    const [allS,allE]=await Promise.all([dbGet('sales'),dbGet('expenses')]);
+    const sales=allS.filter(r=>!r.is_return);
+    const bkeys=Object.keys(BRANCHES).filter(k=>k!=='manager');
+    const bShort={slm_family:'SLM Family',slm_majidi:'SLM Majidi',dhk_watch:'DHK Watch',dhk_sun:'DHK Sun',erb_family:'ERB Family',erb_down:'ERB Down'};
+    let html=`<div class="ph"><div class="pt">📈 Yearly Report / ڕاپۆرتی ساڵانە</div><div class="ps">Every month × every branch — USD equivalent</div></div>`;
+    ['2025','2026'].forEach(yr=>{
+      const yS=sales.filter(r=>r.date?.startsWith(yr));
+      const yE=allE.filter(e=>e.date?.startsWith(yr));
+      const tY=yS.reduce((s,r)=>s+toUSD(r.qty*r.price,r.currency),0);
+      const eY=yE.reduce((s,e)=>s+toUSD(e.amount,e.currency),0);
+      const hCols=bkeys.map(k=>`<th>${bShort[k]}</th>`).join('');
+      let rows='';
+      for(let mi=0;mi<12;mi++){
+        const mk=`${yr}-${String(mi+1).padStart(2,'0')}`;
+        const mS=yS.filter(r=>r.date?.startsWith(mk));
+        if(!mS.length)continue;
+        const mT=mS.reduce((s,r)=>s+toUSD(r.qty*r.price,r.currency),0);
+        const cols=bkeys.map(k=>{const v=mS.filter(r=>r.branch===k).reduce((s,r)=>s+toUSD(r.qty*r.price,r.currency),0);return`<td>${v>0?fU(v):'—'}</td>`;}).join('');
+        rows+=`<tr><td><strong>${MONTHS[mi]}</strong><br><span style="font-size:9px;color:var(--muted);">${MONTHS_KRD[mi]}</span></td>${cols}<td><strong>${fU(mT)}</strong></td></tr>`;
+      }
+      const tCols=bkeys.map(k=>{const v=yS.filter(r=>r.branch===k).reduce((s,r)=>s+toUSD(r.qty*r.price,r.currency),0);return`<td><strong>${fU(v)}</strong></td>`;}).join('');
+      html+=`<div class="sdiv">📅 ${yr}</div>
+      <div class="metrics" style="margin-bottom:12px;">
+        <div class="metric"><div class="m-label">Gross ${yr}</div><div class="m-value gold">${fU(tY)}</div></div>
+        <div class="metric"><div class="m-label">Expenses ${yr}</div><div class="m-value red">-${fU(eY)}</div></div>
+        <div class="metric"><div class="m-label">Net ${yr}</div><div class="m-value green">${fU(tY-eY)}</div></div>
+      </div>
+      <div class="twrap"><table class="yt"><thead><tr><th>Month / مانگ</th>${hCols}<th>Total / کۆ</th></tr></thead>
+      <tbody>${rows||`<tr class="erow"><td colspan="${bkeys.length+2}">No data for ${yr} yet.</td></tr>`}
+      <tr class="yr-total"><td>TOTAL ${yr}</td>${tCols}<td>${fU(tY)}</td></tr></tbody></table></div>`;
+    });
+    html+=`<button class="btn-sm" onclick="window.print()">🖨️ Print</button>`;
+    el('main-content').innerHTML=html;
+  }catch(e){el('main-content').innerHTML=`<div class="alert aerr" style="display:block;">❌ ${e.message}</div>`;}
+}
+
+// ══════════════════════════════════════════════
+// PAYMENTS
+// ══════════════════════════════════════════════
+async function renderPayments(){
+  try{
+    const sales=(await dbGet('sales')).filter(r=>!r.is_return);
+    const cash=sales.filter(r=>r.payment==='Cash');
+    const visa=sales.filter(r=>r.payment==='Visa Card');
+    const trans=sales.filter(r=>r.payment==='Transfer');
+    const cUSD=cash.reduce((s,r)=>s+toUSD(r.qty*r.price,r.currency),0);
+    const vUSD=visa.reduce((s,r)=>s+toUSD(r.qty*r.price,r.currency),0);
+    const tUSD=trans.reduce((s,r)=>s+toUSD(r.qty*r.price,r.currency),0);
+    const bkeys=Object.keys(BRANCHES).filter(k=>k!=='manager');
+    const brows=bkeys.map(k=>{
+      const bs=sales.filter(r=>r.branch===k);
+      const bc=bs.filter(r=>r.payment==='Cash').reduce((s,r)=>s+toUSD(r.qty*r.price,r.currency),0);
+      const bv=bs.filter(r=>r.payment==='Visa Card').reduce((s,r)=>s+toUSD(r.qty*r.price,r.currency),0);
+      const bt=bs.filter(r=>r.payment==='Transfer').reduce((s,r)=>s+toUSD(r.qty*r.price,r.currency),0);
+      return `<tr><td style="font-size:11px;white-space:normal;">${bFull(k)}<br><span style="color:var(--muted);font-size:10px;">${bKrd(k)}</span></td><td>${fU(bc)}</td><td>${fU(bv)}</td><td>${fU(bt)}</td><td><strong>${fU(bc+bv+bt)}</strong></td></tr>`;
+    }).join('');
+    el('main-content').innerHTML=`
+    <div class="ph"><div class="pt">💳 Payment Breakdown / جۆری پارەدان</div><div class="ps">Cash vs Visa Card vs Bank Transfer — all branches</div></div>
+    <div class="paygrid">
+      <div class="paycard cash"><div class="pay-icon">💵</div><div class="pay-label">Cash / نەقد</div><div class="pay-value">${fU(cUSD)}</div><div class="pay-count">${cash.length} transactions</div></div>
+      <div class="paycard visa"><div class="pay-icon">💳</div><div class="pay-label">Visa Card / ڤیزا</div><div class="pay-value">${fU(vUSD)}</div><div class="pay-count">${visa.length} transactions</div></div>
+      <div class="paycard trans"><div class="pay-icon">🏦</div><div class="pay-label">Transfer / حەوالە</div><div class="pay-value">${fU(tUSD)}</div><div class="pay-count">${trans.length} transactions</div></div>
+    </div>
+    <div class="sdiv">By Branch / بەپێی لق</div>
+    <div class="twrap"><table><thead><tr><th>Branch / لق</th><th>💵 Cash</th><th>💳 Visa</th><th>🏦 Transfer</th><th>Total / کۆ</th></tr></thead>
+    <tbody>${brows||'<tr class="erow"><td colspan="5">No data yet.</td></tr>'}</tbody></table></div>`;
+  }catch(e){el('main-content').innerHTML=`<div class="alert aerr" style="display:block;">❌ ${e.message}</div>`;}
+}
+
+// ══════════════════════════════════════════════
+// EXPENSES
+// ══════════════════════════════════════════════
+function renderExpenses(){
+  const isM=CU==='manager';
+  const catOpts=EXPENSE_CATS.map(c=>`<option value="${c}">${c}</option>`).join('');
+  el('main-content').innerHTML=`
+  <div class="ph"><div class="pt">💸 ${isM?'All Expenses':'Log Expenses'} / خەرجی</div><div class="ps">${isM?'Full expense log — all branches':'You can add multiple expenses — unlimited per month / ئەتوانی زۆر خەرجی تۆمار بکەی'}</div></div>
+  <div id="exp-ok" class="alert aok">✅ Expense saved! / خەرجی تۆمار کرا!</div>
+  <div id="exp-er" class="alert aerr">⚠️ Fill all required fields / هەموو خانەکان پڕ بکەرەوە</div>
+  <div class="card">
+    <div class="card-title">➕ Add New Expense <span class="card-title-krd">/ زیادکردنی خەرجی</span></div>
+    <div class="fgrid">
+      <div class="fgroup"><label>Category / جۆر *</label><select id="e-cat">${catOpts}</select></div>
+      <div class="fgroup"><label>Amount / بڕی پارە *</label><div class="price-row"><input type="number" id="e-amt" placeholder="0" min="0" step="0.01"/><select id="e-cur"><option value="USD">USD $</option><option value="IQD">IQD</option></select></div></div>
+      <div class="fgroup"><label>Payment / جۆری پارەدان</label><select id="e-pay"><option value="Cash">💵 Cash</option><option value="Visa Card">💳 Visa Card</option><option value="Transfer">🏦 Transfer</option></select></div>
+      <div class="fgroup"><label>Date / بەروار *</label><input type="date" id="e-date" value="${today()}"/></div>
+      <div class="fgroup"><label>Responsible / ئەرکداری *</label><input type="text" id="e-staff" placeholder="Name / ناو"/></div>
+      <div class="fgroup ffull"><label>Full Description / وردەکاری تەواو *<span class="krd">وردەکاری زیاتر بنووسە — ئایا کرێ؟ مووچە؟ کارەبا؟</span></label><textarea id="e-desc" placeholder="e.g. Monthly rent for Family Mall — 3,500,000 IQD paid to landlord. Receipt #245&#10;مەسەلەن: کرێی مانگانەی فامیلی مۆڵ..."></textarea></div>
+    </div>
+    <div class="factions"><button class="btn-save danger" onclick="submitExpense()">💸 Save Expense / پاشەکەوتکردن</button></div>
+  </div>
+  <div class="sdiv">Expense Records / تۆمارەکان</div>
+  <div id="exp-records">${spinner()}</div>`;
+  loadExpenses();
+}
+async function loadExpenses(){
+  const isM=CU==='manager';
+  try{
+    const qs=isM?'':(`&branch=eq.${CU}`);
+    const exp=await dbGet('expenses',qs);
+    const tUSD=exp.reduce((s,e)=>s+toUSD(e.amount,e.currency),0);
+    const mUSD=exp.filter(e=>e.date?.startsWith(curMonth())).reduce((s,e)=>s+toUSD(e.amount,e.currency),0);
+    // Category summary
+    const catSummary=EXPENSE_CATS.map(cat=>{
+      const ce=exp.filter(e=>e.category===cat);
+      const cv=ce.reduce((s,e)=>s+toUSD(e.amount,e.currency),0);
+      if(!cv)return'';
+      return `<div class="reprow"><div><div class="rep-name">${cat}</div><div class="rep-sub">${ce.length} entries</div></div><div class="rep-amt" style="color:var(--red);">-${fU(cv)}</div></div>`;
+    }).join('');
+    const rows=exp.length?exp.map(e=>`<tr>
+      <td>${e.date}</td>
+      <td style="font-size:11px;white-space:normal;max-width:110px;">${isM?bFull(e.branch):'My Branch'}</td>
+      <td style="font-size:11px;"><strong>${e.category}</strong></td>
+      <td style="max-width:200px;white-space:normal;font-size:11px;">${e.description||'—'}</td>
+      <td style="color:var(--red);font-weight:700;white-space:nowrap;">${fmtAmt(e.amount,e.currency)} ${curBadge(e.currency||'USD')}</td>
+      <td>${payBadge(e.payment)}</td>
+      <td style="font-size:11px;">${e.staff||'—'}</td>
+    </tr>`).join(''):`<tr class="erow"><td colspan="7">No expenses yet. Add your first expense above.</td></tr>`;
+    el('exp-records').innerHTML=`
+    <div class="metrics" style="margin-bottom:14px;">
+      <div class="metric"><div class="m-label">Total / کۆی گشتی</div><div class="m-value red">-${fU(tUSD)}</div></div>
+      <div class="metric"><div class="m-label">This Month / ئەم مانگە</div><div class="m-value red">-${fU(mUSD)}</div></div>
+      <div class="metric"><div class="m-label">Entries</div><div class="m-value">${exp.length}</div></div>
+    </div>
+    <div class="sdiv">By Category / بەپێی جۆر</div>
+    <div class="card" style="padding:0;overflow:hidden;">${catSummary||'<div class="reprow"><div class="rep-sub" style="padding:4px;">No expenses yet.</div></div>'}</div>
+    <div class="sdiv">All Entries / هەموو تۆمارەکان</div>
+    <div class="twrap"><table class="exp-table"><thead><tr><th>Date</th><th>Branch</th><th>Category</th><th>Description</th><th>Amount</th><th>Payment</th><th>Staff</th></tr></thead><tbody>${rows}</tbody></table></div>`;
+  }catch(e){el('exp-records').innerHTML=`<div class="alert aerr" style="display:block;">❌ ${e.message}</div>`;}
+}
+async function submitExpense(){
+  const cat=el('e-cat').value,amt=parseFloat(el('e-amt').value)||0;
+  const cur=el('e-cur').value,pay=el('e-pay').value,date=el('e-date').value;
+  const staff=val('e-staff'),desc=val('e-desc');
+  const ok=el('exp-ok'),er=el('exp-er');
+  ok.style.display='none';er.style.display='none';
+  if(!cat||amt<=0||!staff||!date||!desc){er.style.display='block';er.scrollIntoView({behavior:'smooth',block:'center'});return;}
+  try{
+    await dbInsert('expenses',{branch:CU,date,category:cat,amount:amt,currency:cur,payment:pay,staff,description:desc});
+    ok.style.display='block';ok.scrollIntoView({behavior:'smooth',block:'center'});
+    el('e-amt').value='';el('e-staff').value='';el('e-desc').value='';
+    await loadExpenses();
+  }catch(e){er.textContent='❌ '+e.message;er.style.display='block';}
+}
+
+// ══════════════════════════════════════════════
+// LOG SALE
+// ══════════════════════════════════════════════
+function renderLogSale(){
+  const brandOpts=BRANDS.map(b=>`<option value="${b}">${b}</option>`).join('');
+  el('main-content').innerHTML=`
+  <div class="ph"><div class="pt">➕ Log a Sale / تۆمارکردنی فرۆشتن</div><div class="ps">Every item sold = one entry. Add as many as you like each day.<br>هەر شتێک بفرۆشیت تۆمار بکە — ئەتوانی هەر ڕۆژ زۆر تۆمار زیاد بکەیت</div></div>
+  <div id="sale-ok" class="alert aok">✅ Sale saved! Manager can see it now. / فرۆشتن تۆمار کرا! بەڕێوەبەر ئەیبینێت.</div>
+  <div id="sale-er" class="alert aerr">⚠️ Fill all required fields / خانە پێویستەکان پڕ بکەرەوە</div>
+  <div class="card">
+    <div class="fgrid">
+      <div class="fgroup"><label>Brand / براند *<span class="krd">ناوی کۆمپانیا</span></label><select id="f-brand"><option value="">— Select / هەڵبژێرە —</option>${brandOpts}</select></div>
+      <div class="fgroup"><label>Category / جۆر *</label><select id="f-cat"><option value="Watch">⌚ Watch / کاتژمێر</option><option value="Jewelry">💍 Jewelry / زێڕ</option><option value="Eyewear">🕶 Eyewear / عەینک</option></select></div>
+      <div class="fgroup"><label>Model / مۆدێل</label><input type="text" id="f-model" placeholder="e.g. PRX 40mm, Aviator"/></div>
+      <div class="fgroup"><label>Reference No. / ژ. مۆدێل</label><input type="text" id="f-ref" placeholder="e.g. T137.410.11.041.00"/></div>
+      <div class="fgroup"><label>Quantity / ژمارە *<span class="krd">چەند دانە فرۆشراوە؟</span></label><input type="number" id="f-qty" value="1" min="1"/></div>
+      <div class="fgroup"><label>Unit Price / نرخ *<span class="krd">نرخی یەک دانە</span></label><div class="price-row"><input type="number" id="f-price" placeholder="0" min="0" step="0.01"/><select id="f-cur"><option value="USD">USD $</option><option value="IQD">IQD</option></select></div></div>
+      <div class="fgroup"><label>Payment / جۆری پارەدان *</label><select id="f-pay"><option value="Cash">💵 Cash / نەقد</option><option value="Visa Card">💳 Visa Card</option><option value="Transfer">🏦 Bank Transfer / حەوالە</option></select></div>
+      <div class="fgroup"><label>Date / بەروار *</label><input type="date" id="f-date" value="${today()}"/></div>
+      <div class="fgroup"><label>Staff Name / ناوی فرۆشیار *</label><input type="text" id="f-staff" placeholder="Your name / ناوت"/></div>
+      <div class="fgroup"><label>Customer Name / ناوی کڕیار</label><input type="text" id="f-cust" placeholder="Optional / ئەختیاری"/></div>
+      <div class="fgroup ffull"><label>Notes / تێبینی<span class="krd">مەسەلەن: گارەنتی، داشکاندن، تەلەفۆن مووچە...</span></label><textarea id="f-note" placeholder="Warranty info, discount, special request...&#10;زانیاری گارەنتی، داشکاندن، داواکاری تایبەت..."></textarea></div>
+    </div>
+    <div class="factions">
+      <button class="btn-save" onclick="submitSale()">✅ Save Sale / پاشەکەوتکردن</button>
+      <button class="btn-clear" onclick="clearSaleForm()">Clear / پاکردنەوە</button>
+    </div>
+  </div>
+  <div style="background:var(--gold-light);border:1px solid var(--gold);border-radius:var(--rs);padding:14px;font-size:12px;color:var(--gold-dark);line-height:1.7;">
+    💡 <strong>Tip / تێبینی:</strong> After saving, the form clears automatically so you can enter the next sale right away.<br>
+    دوای پاشەکەوتکردن، فۆرمەکە بە خۆی پاک دەبێتەوە بۆ تۆمارکردنی فرۆشتنی دیکە.
+  </div>`;
+}
+async function submitSale(){
+  const brand=el('f-brand').value,qty=parseInt(el('f-qty').value)||0,price=parseFloat(el('f-price').value)||0;
+  const staff=val('f-staff'),date=el('f-date').value;
+  const ok=el('sale-ok'),er=el('sale-er');
+  ok.style.display='none';er.style.display='none';
+  if(!brand||qty<1||price<=0||!staff||!date){er.style.display='block';er.scrollIntoView({behavior:'smooth',block:'center'});return;}
+  try{
+    await dbInsert('sales',{branch:CU,date,brand,category:el('f-cat').value,model:val('f-model'),qty,price,currency:el('f-cur').value,payment:el('f-pay').value,staff,customer:val('f-cust'),note:val('f-note'),is_return:false});
+    ok.style.display='block';ok.scrollIntoView({behavior:'smooth',block:'center'});
+    clearSaleForm();
+  }catch(e){er.textContent='❌ '+e.message;er.style.display='block';}
+}
+function clearSaleForm(){
+  ['f-model','f-ref','f-staff','f-cust','f-note'].forEach(id=>{const e=el(id);if(e)e.value='';});
+  el('f-brand').value='';el('f-qty').value='1';el('f-price').value='';
+  el('f-date').value=today();el('f-cur').value='USD';
+}
+
+// ══════════════════════════════════════════════
+// TODAY SALES (staff)
+// ══════════════════════════════════════════════
+async function renderTodaySales(){
+  try{
+    const all=await dbGet('sales',`&branch=eq.${CU}`);
+    const todS=all.filter(r=>r.date===today()&&!r.is_return);
+    const monS=all.filter(r=>r.date?.startsWith(curMonth())&&!r.is_return);
+    const todR=todS.reduce((s,r)=>s+toUSD(r.qty*r.price,r.currency),0);
+    const monR=monS.reduce((s,r)=>s+toUSD(r.qty*r.price,r.currency),0);
+    el('main-content').innerHTML=`
+    <div class="ph"><div class="pt">📋 My Sales / فرۆشتنەکانم</div><div class="ps">${bFull(CU)} — ${bKrd(CU)}</div></div>
+    <div class="metrics">
+      <div class="metric"><div class="m-label">Today / ئەمرۆ</div><div class="m-value green">${fU(todR)}</div><div class="m-sub">${todS.length} sales</div></div>
+      <div class="metric"><div class="m-label">This Month / ئەم مانگە</div><div class="m-value gold">${fU(monR)}</div><div class="m-sub">${monS.length} sales</div></div>
+      <div class="metric"><div class="m-label">All Time</div><div class="m-value">${all.length}</div><div class="m-sub">total records</div></div>
+    </div>
+    <div class="sdiv">Today's Sales / فرۆشتنی ئەمرۆ</div>
+    ${salesDisplay(todS)}
+    <div class="sdiv">All My Sales / هەموو فرۆشتنەکانم</div>
+    ${salesDisplay(all)}`;
+  }catch(e){el('main-content').innerHTML=`<div class="alert aerr" style="display:block;">❌ ${e.message}</div>`;}
+}
+
+// ══════════════════════════════════════════════
+// RETURNS
+// ══════════════════════════════════════════════
+function renderReturns(){
+  const isM=CU==='manager';
+  const brandOpts=BRANDS.map(b=>`<option value="${b}">${b}</option>`).join('');
+  el('main-content').innerHTML=`
+  <div class="ph"><div class="pt">↩ ${isM?'All Returns':'Log Return'} / گەڕاندنەوە</div><div class="ps">Returns are automatically deducted from branch revenue.</div></div>
+  <div id="ret-ok" class="alert aok">↩ Return saved! / گەڕاندنەوە تۆمار کرا!</div>
+  <div id="ret-er" class="alert aerr">⚠️ Fill all required fields.</div>
+  ${!isM?`<div class="card">
+    <div class="card-title">↩ Record a Return / تۆمارکردنی گەڕاندنەوە</div>
+    <div class="fgrid">
+      <div class="fgroup"><label>Brand / براند *</label><select id="r-brand"><option value="">— Select —</option>${brandOpts}</select></div>
+      <div class="fgroup"><label>Category / جۆر *</label><select id="r-cat"><option value="Watch">⌚ Watch</option><option value="Jewelry">💍 Jewelry</option><option value="Eyewear">🕶 Eyewear</option></select></div>
+      <div class="fgroup"><label>Quantity / ژمارە *</label><input type="number" id="r-qty" value="1" min="1"/></div>
+      <div class="fgroup"><label>Original Price / نرخی سەرەتا *</label><div class="price-row"><input type="number" id="r-price" placeholder="0" min="0"/><select id="r-cur"><option value="USD">USD $</option><option value="IQD">IQD</option></select></div></div>
+      <div class="fgroup"><label>Staff / فرۆشیار *</label><input type="text" id="r-staff" placeholder="Your name"/></div>
+      <div class="fgroup"><label>Date / بەروار *</label><input type="date" id="r-date" value="${today()}"/></div>
+      <div class="fgroup ffull"><label>Reason / هۆکار *<span class="krd">بۆچی گەڕاندرایەوە؟</span></label><textarea id="r-reason" placeholder="Reason for return — defect, customer request, exchange...&#10;هۆکاری گەڕاندنەوە..."></textarea></div>
+    </div>
+    <div class="factions"><button class="btn-save danger" onclick="submitReturn()">↩ Save Return</button></div>
+  </div>`:''}
+  <div class="sdiv">Return Records / تۆمارەکان</div>
+  <div id="ret-records">${spinner()}</div>`;
+  loadReturnRecords();
+}
+async function loadReturnRecords(){
+  const isM=CU==='manager';
+  try{
+    const qs=isM?'&is_return=eq.true':`&is_return=eq.true&branch=eq.${CU}`;
+    const rets=await dbGet('sales',qs);
+    el('ret-records').innerHTML=salesDisplay(rets);
+  }catch(e){el('ret-records').innerHTML=`<div class="alert aerr" style="display:block;">❌ ${e.message}</div>`;}
+}
+async function submitReturn(){
+  const brand=el('r-brand').value,qty=parseInt(el('r-qty').value)||0;
+  const price=parseFloat(el('r-price').value)||0,staff=val('r-staff');
+  const date=el('r-date').value,reason=val('r-reason');
+  const ok=el('ret-ok'),er=el('ret-er');
+  ok.style.display='none';er.style.display='none';
+  if(!brand||qty<1||price<=0||!staff||!date||!reason){er.style.display='block';return;}
+  try{
+    await dbInsert('sales',{branch:CU,date,brand,category:el('r-cat').value,qty,price,currency:el('r-cur').value,payment:'—',staff,note:reason,is_return:true});
+    ok.style.display='block';ok.scrollIntoView({behavior:'smooth',block:'center'});
+    ['r-staff','r-reason'].forEach(id=>{const e=el(id);if(e)e.value='';});
+    el('r-brand').value='';el('r-qty').value='1';el('r-price').value='';
+    await loadReturnRecords();
+  }catch(e){er.textContent='❌ '+e.message;er.style.display='block';}
+}
+
+window.addEventListener('resize',()=>{ if(CU) buildNav(); });
+</script>
+</body>
+</html>
+<script>
+// ══════════════════════════════════════════════
+// MONTHLY SUMMARY — BRANCH END-OF-MONTH REPORT
+// ══════════════════════════════════════════════
+
+function renderSummaries(){
+  const isM = CU === 'manager';
+  const now = new Date();
+  let monthOpts = '';
+  for(let y=2025;y<=2026;y++) for(let m=1;m<=12;m++){
+    const v=`${y}-${String(m).padStart(2,'0')}`;
+    const sel=(y===now.getFullYear()&&m===(now.getMonth()+1))?'selected':'';
+    monthOpts+=`<option value="${v}" ${sel}>${MONTHS[m-1]} ${y} / ${MONTHS_KRD[m-1]}</option>`;
+  }
+
+  if(isM){
+    // MANAGER VIEW — see all 6 summaries
+    el('main-content').innerHTML=`
+    <div class="ph">
+      <div class="pt">📝 Monthly Summaries / کورتەی مانگانە</div>
+      <div class="ps">End-of-month reports submitted by each branch — all details in one page</div>
+    </div>
+    <div class="month-bar">
+      <select class="month-select" id="sum-mon-sel" onchange="loadManagerSummaries()">${monthOpts}</select>
+      <button class="btn-sm" onclick="window.print()">🖨️ Print All</button>
+    </div>
+    <div id="sum-body">${spinner()}</div>`;
+    loadManagerSummaries();
+  } else {
+    // STAFF VIEW — fill and submit their monthly summary
+    el('main-content').innerHTML=`
+    <div class="ph">
+      <div class="pt">📝 Monthly Summary Report / ڕاپۆرتی کۆتای مانگ</div>
+      <div class="ps">Fill this at the end of each month and submit to the manager.<br>
+      ئەمەی کۆتای هەر مانگێک پڕ بکەرەوە و بنێرە بۆ بەڕێوەبەر.</div>
+    </div>
+    <div class="month-bar">
+      <select class="month-select" id="sum-mon-sel" onchange="checkExistingSummary()">${monthOpts}</select>
+    </div>
+    <div id="sum-check">${spinner()}</div>`;
+    checkExistingSummary();
+  }
+}
+
+// ── STAFF: check if summary already submitted ──
+async function checkExistingSummary(){
+  const m = el('sum-mon-sel').value;
+  const label = new Date(m+'-01').toLocaleDateString('en-US',{month:'long',year:'numeric'});
+  try{
+    const existing = await dbGet('summaries',`&branch=eq.${CU}&month=eq.${m}`);
+    if(existing && existing.length > 0){
+      const s = existing[0];
+      el('sum-check').innerHTML = `
+      <div class="alert aok" style="display:block;">
+        ✅ You already submitted your summary for <strong>${label}</strong>.<br>
+        تۆ کورتەی <strong>${label}</strong> ناردووتە بەڕێوەبەر.
+      </div>
+      ${summaryViewCard(s, false)}
+      <div style="margin-top:14px;">
+        <button class="btn-sm" onclick="deleteSummaryAndRefresh('${s.id}')">🔄 Re-submit for this month / دووبارە بنێرە</button>
+      </div>`;
+    } else {
+      el('sum-check').innerHTML = summaryForm(m, label);
+    }
+  }catch(e){
+    // table may not exist yet, show form anyway
+    el('sum-check').innerHTML = summaryForm(m, label);
+  }
+}
+
+function summaryForm(m, label){
+  const expCatOpts = EXPENSE_CATS.map(c=>`
+    <div class="exp-line" style="display:grid;grid-template-columns:1fr 140px 100px;gap:8px;align-items:center;margin-bottom:8px;">
+      <span style="font-size:13px;color:var(--text);">${c}</span>
+      <input type="number" class="exp-cat-input" data-cat="${c}" placeholder="Amount / بڕ" min="0" step="0.01" style="border:1.5px solid var(--border);border-radius:var(--rs);padding:8px 10px;font-size:13px;background:var(--off);outline:none;width:100%;"/>
+      <select class="exp-cat-cur" data-cat="${c}" style="border:1.5px solid var(--border);border-radius:var(--rs);padding:8px 10px;font-size:13px;background:var(--off);outline:none;width:100%;">
+        <option value="USD">USD $</option>
+        <option value="IQD">IQD</option>
+      </select>
+    </div>`).join('');
+
+  return `
+  <div id="sum-ok" class="alert aok">✅ Summary submitted! Manager will see it now. / کورتە نێردرا! بەڕێوەبەر ئەیبینێت.</div>
+  <div id="sum-er" class="alert aerr">⚠️ Please fill all required fields. / خانە پێویستەکان پڕ بکەرەوە.</div>
+
+  <div class="card">
+    <div class="card-title">📊 Sales Summary / کورتەی فرۆشتن — ${label}</div>
+    <div class="fgrid">
+      <div class="fgroup">
+        <label>Total Items Sold / کۆی دانەی فرۆشراو *</label>
+        <input type="number" id="s-qty" placeholder="e.g. 45" min="0"/>
+      </div>
+      <div class="fgroup">
+        <label>Total Sales Amount / کۆی بڕی فرۆشتن *</label>
+        <div class="price-row">
+          <input type="number" id="s-total" placeholder="0" min="0" step="0.01"/>
+          <select id="s-cur"><option value="USD">USD $</option><option value="IQD">IQD</option></select>
+        </div>
+      </div>
+      <div class="fgroup">
+        <label>Cash Received / پارەی نەقد *</label>
+        <div class="price-row">
+          <input type="number" id="s-cash" placeholder="0" min="0" step="0.01"/>
+          <select id="s-cash-cur"><option value="USD">USD $</option><option value="IQD">IQD</option></select>
+        </div>
+      </div>
+      <div class="fgroup">
+        <label>Visa Card Received / ڤیزا کارد *</label>
+        <div class="price-row">
+          <input type="number" id="s-visa" placeholder="0" min="0" step="0.01"/>
+          <select id="s-visa-cur"><option value="USD">USD $</option><option value="IQD">IQD</option></select>
+        </div>
+      </div>
+      <div class="fgroup">
+        <label>Bank Transfer Received / حەوالە *</label>
+        <div class="price-row">
+          <input type="number" id="s-trans" placeholder="0" min="0" step="0.01"/>
+          <select id="s-trans-cur"><option value="USD">USD $</option><option value="IQD">IQD</option></select>
+        </div>
+      </div>
+      <div class="fgroup">
+        <label>Returns / گەڕاندنەوە</label>
+        <div class="price-row">
+          <input type="number" id="s-returns" placeholder="0" min="0" step="0.01"/>
+          <select id="s-ret-cur"><option value="USD">USD $</option><option value="IQD">IQD</option></select>
+        </div>
+      </div>
+      <div class="fgroup">
+        <label>⌚ Watches Sold / کاتژمێر</label>
+        <input type="number" id="s-watches" placeholder="qty" min="0"/>
+      </div>
+      <div class="fgroup">
+        <label>💍 Jewelry Sold / زێڕ</label>
+        <input type="number" id="s-jewelry" placeholder="qty" min="0"/>
+      </div>
+      <div class="fgroup ffull">
+        <label>🕶 Eyewear Sold / عەینک</label>
+        <input type="number" id="s-eyewear" placeholder="qty" min="0" style="max-width:200px;"/>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">💸 Monthly Expenses / خەرجیەکانی مانگ</div>
+    <p style="font-size:12px;color:var(--muted);margin-bottom:14px;">Enter the amount for each expense category. Leave blank if none.<br>
+    بڕی هەر جۆرێکی خەرجی بنووسە. ئەگەر نەبوو بەتاڵ بهێڵەرەوە.</p>
+    ${expCatOpts}
+    <div class="fgroup" style="margin-top:12px;">
+      <label>Total Expenses / کۆی گشتی خەرجی</label>
+      <div class="price-row">
+        <input type="number" id="s-exp-total" placeholder="Auto or enter manually" min="0" step="0.01"/>
+        <select id="s-exp-cur"><option value="USD">USD $</option><option value="IQD">IQD</option></select>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">📋 Best Selling Items / باشترین فرۆشتن</div>
+    <div class="fgroup ffull">
+      <label>Top 3 Best Selling Brands / 3 براندی باشتر *</label>
+      <textarea id="s-top-brands" placeholder="e.g.&#10;1. Tissot — 12 pieces&#10;2. Ray-Ban — 8 pieces&#10;3. Longines — 5 pieces"></textarea>
+    </div>
+    <div class="fgroup ffull" style="margin-top:12px;">
+      <label>Top 3 Best Selling Items / 3 شتی باشتر</label>
+      <textarea id="s-top-items" placeholder="e.g.&#10;1. Tissot PRX — $850 × 5&#10;2. Ray-Ban Aviator — $210 × 8&#10;3. Tissot Seastar — $650 × 3"></textarea>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">💬 Manager Notes / تێبینی بۆ بەڕێوەبەر</div>
+    <div class="fgroup ffull">
+      <label>Any issues, requests, or comments for Manager Niven *</label>
+      <textarea id="s-notes" placeholder="e.g. We need more stock of Tissot PRX. The display cabinet needs repair. Sales were slow in the first week due to holiday...&#10;&#10;مەسەلەن: پێویستمان بە زیاتر ئەمبار هەیە. ئەمساڵ فرۆشتن باشتر بوو لە ساڵی پار..."></textarea>
+    </div>
+    <div class="fgroup ffull" style="margin-top:12px;">
+      <label>Staff Name / ناوی ئەرکداری *</label>
+      <input type="text" id="s-staff" placeholder="Branch manager or responsible staff name"/>
+    </div>
+  </div>
+
+  <div class="factions">
+    <button class="btn-save" onclick="submitSummary('${m}')">📝 Submit Monthly Report / ناردنی ڕاپۆرت</button>
+  </div>
+  <div style="background:var(--gold-light);border:1px solid var(--gold);border-radius:var(--rs);padding:14px;font-size:12px;color:var(--gold-dark);line-height:1.8;margin-top:14px;">
+    💡 <strong>Important / گرینگ:</strong> Submit this report at the end of every month.<br>
+    ئەم ڕاپۆرتە هەر کۆتای مانگێک بنێرە بۆ بەڕێوەبەر نیڤێن.<br>
+    You can only submit <strong>once per month</strong> — make sure all information is correct before submitting.
+  </div>`;
+}
+
+async function submitSummary(month){
+  const qty       = parseFloat(el('s-qty')?.value)||0;
+  const total     = parseFloat(el('s-total')?.value)||0;
+  const cur       = el('s-cur')?.value||'USD';
+  const cash      = parseFloat(el('s-cash')?.value)||0;
+  const cashCur   = el('s-cash-cur')?.value||'USD';
+  const visa      = parseFloat(el('s-visa')?.value)||0;
+  const visaCur   = el('s-visa-cur')?.value||'USD';
+  const trans     = parseFloat(el('s-trans')?.value)||0;
+  const transCur  = el('s-trans-cur')?.value||'USD';
+  const returns   = parseFloat(el('s-returns')?.value)||0;
+  const retCur    = el('s-ret-cur')?.value||'USD';
+  const watches   = parseInt(el('s-watches')?.value)||0;
+  const jewelry   = parseInt(el('s-jewelry')?.value)||0;
+  const eyewear   = parseInt(el('s-eyewear')?.value)||0;
+  const topBrands = val('s-top-brands');
+  const topItems  = val('s-top-items');
+  const notes     = val('s-notes');
+  const staff     = val('s-staff');
+
+  // collect expense breakdown
+  const expLines = {};
+  document.querySelectorAll('.exp-cat-input').forEach(inp=>{
+    const cat = inp.dataset.cat;
+    const amt = parseFloat(inp.value)||0;
+    const cur2 = document.querySelector(`.exp-cat-cur[data-cat="${cat}"]`)?.value||'USD';
+    if(amt>0) expLines[cat] = {amount:amt, currency:cur2};
+  });
+  const expTotal  = parseFloat(el('s-exp-total')?.value)||Object.values(expLines).reduce((s,v)=>s+toUSD(v.amount,v.currency),0);
+  const expCur    = el('s-exp-cur')?.value||'USD';
+
+  const ok=el('sum-ok'), er=el('sum-er');
+  ok.style.display='none'; er.style.display='none';
+
+  if(!total||!staff||!topBrands||!notes){
+    er.style.display='block'; er.scrollIntoView({behavior:'smooth',block:'center'}); return;
+  }
+
+  const label = new Date(month+'-01').toLocaleDateString('en-US',{month:'long',year:'numeric'});
+
+  try{
+    await dbInsert('summaries',{
+      branch: CU,
+      month,
+      month_label: label,
+      staff,
+      total_qty: qty,
+      total_sales: total,
+      sales_currency: cur,
+      cash_received: cash,
+      cash_currency: cashCur,
+      visa_received: visa,
+      visa_currency: visaCur,
+      transfer_received: trans,
+      transfer_currency: transCur,
+      returns_amount: returns,
+      returns_currency: retCur,
+      watches_sold: watches,
+      jewelry_sold: jewelry,
+      eyewear_sold: eyewear,
+      expense_total: expTotal,
+      expense_currency: expCur,
+      expense_breakdown: JSON.stringify(expLines),
+      top_brands: topBrands,
+      top_items: topItems,
+      manager_notes: notes,
+      submitted_at: new Date().toISOString()
+    });
+    ok.style.display='block'; ok.scrollIntoView({behavior:'smooth',block:'center'});
+    setTimeout(()=>checkExistingSummary(), 2000);
+  }catch(e){
+    // if table doesn't exist yet, show SQL reminder
+    er.innerHTML='❌ Database table missing. Please run this SQL in Supabase SQL Editor:<br><br>'
+      +'<code style="font-size:11px;background:#eee;padding:4px 8px;border-radius:4px;display:block;margin-top:6px;">'+
+      `create table if not exists summaries (
+  id bigint generated always as identity primary key,
+  branch text, month text, month_label text, staff text,
+  total_qty numeric, total_sales numeric, sales_currency text,
+  cash_received numeric, cash_currency text,
+  visa_received numeric, visa_currency text,
+  transfer_received numeric, transfer_currency text,
+  returns_amount numeric, returns_currency text,
+  watches_sold int, jewelry_sold int, eyewear_sold int,
+  expense_total numeric, expense_currency text,
+  expense_breakdown text,
+  top_brands text, top_items text, manager_notes text,
+  submitted_at text, created_at timestamptz default now()
+);
+alter table summaries enable row level security;
+create policy "open_summaries" on summaries
+  for all using (true) with check (true);`
+      +'</code>';
+    er.style.display='block';
+  }
+}
+
+async function deleteSummaryAndRefresh(id){
+  if(!confirm('This will delete the current summary so you can re-submit. Continue?')) return;
+  try{
+    await fetch(`${SB_URL}/rest/v1/summaries?id=eq.${id}`,{method:'DELETE',headers:{apikey:SB_KEY,Authorization:'Bearer '+SB_KEY}});
+    checkExistingSummary();
+  }catch(e){ alert('Error: '+e.message); }
+}
+
+// ── MANAGER: view all branch summaries ──
+async function loadManagerSummaries(){
+  const m = el('sum-mon-sel').value;
+  const label = new Date(m+'-01').toLocaleDateString('en-US',{month:'long',year:'numeric'});
+  const mKrd = MONTHS_KRD[parseInt(m.split('-')[1])-1]+' '+m.split('-')[0];
+  el('sum-body').innerHTML = spinner();
+  try{
+    const subs = await dbGet('summaries',`&month=eq.${m}`);
+    const bkeys = Object.keys(BRANCHES).filter(k=>k!=='manager');
+    const submitted = bkeys.filter(k=>subs.find(s=>s.branch===k));
+    const missing   = bkeys.filter(k=>!subs.find(s=>s.branch===k));
+
+    // totals across all branches
+    const grandTotal  = subs.reduce((s,r)=>s+toUSD(r.total_sales,r.sales_currency),0);
+    const grandExp    = subs.reduce((s,r)=>s+toUSD(r.expense_total,r.expense_currency),0);
+    const grandRet    = subs.reduce((s,r)=>s+toUSD(r.returns_amount,r.returns_currency),0);
+    const grandNet    = grandTotal - grandExp - grandRet;
+    const grandCash   = subs.reduce((s,r)=>s+toUSD(r.cash_received,r.cash_currency),0);
+    const grandVisa   = subs.reduce((s,r)=>s+toUSD(r.visa_received,r.visa_currency),0);
+    const grandTrans  = subs.reduce((s,r)=>s+toUSD(r.transfer_received,r.transfer_currency),0);
+    const grandWatch  = subs.reduce((s,r)=>s+(r.watches_sold||0),0);
+    const grandJew    = subs.reduce((s,r)=>s+(r.jewelry_sold||0),0);
+    const grandEye    = subs.reduce((s,r)=>s+(r.eyewear_sold||0),0);
+
+    const summaryCards = subs.map(s=>summaryViewCard(s, true)).join('');
+
+    const missingHtml = missing.length
+      ? `<div style="background:var(--red-bg);border:1px solid #ECC;border-radius:var(--rs);padding:14px;margin-bottom:16px;">
+          <strong style="color:var(--red);">⚠️ Not yet submitted / ئەمانە هێشتا نەیناردووە:</strong><br>
+          <div style="margin-top:8px;display:flex;flex-wrap:wrap;gap:8px;">
+          ${missing.map(k=>`<span style="background:var(--red-bg);color:var(--red);border:1px solid #ECC;border-radius:20px;padding:4px 12px;font-size:12px;font-weight:600;">${BRANCHES[k].icon} ${BRANCHES[k].city} — ${BRANCHES[k].fullName}</span>`).join('')}
+          </div></div>`
+      : `<div style="background:var(--green-bg);border:1px solid #A8D8C0;border-radius:var(--rs);padding:12px;margin-bottom:16px;font-size:13px;color:var(--green);font-weight:600;">✅ All 6 branches have submitted their reports! / هەموو ٦ لق ڕاپۆرتیان ناردووە!</div>`;
+
+    el('sum-body').innerHTML = `
+    <div class="metrics">
+      <div class="metric"><div class="m-label">Gross Revenue</div><div class="m-value gold">${fU(grandTotal)}</div><div class="m-sub">${submitted.length}/6 branches submitted</div></div>
+      <div class="metric"><div class="m-label">Total Expenses</div><div class="m-value red">-${fU(grandExp)}</div></div>
+      <div class="metric"><div class="m-label">Returns</div><div class="m-value red">-${fU(grandRet)}</div></div>
+      <div class="metric"><div class="m-label">Net Income / داهات</div><div class="m-value green">${fU(grandNet)}</div></div>
+      <div class="metric"><div class="m-label">💵 Cash</div><div class="m-value">${fU(grandCash)}</div></div>
+      <div class="metric"><div class="m-label">💳 Visa Card</div><div class="m-value">${fU(grandVisa)}</div></div>
+      <div class="metric"><div class="m-label">🏦 Transfer</div><div class="m-value">${fU(grandTrans)}</div></div>
+      <div class="metric"><div class="m-label">⌚ Watches</div><div class="m-value blue">${grandWatch} pcs</div></div>
+      <div class="metric"><div class="m-label">💍 Jewelry</div><div class="m-value blue">${grandJew} pcs</div></div>
+      <div class="metric"><div class="m-label">🕶 Eyewear</div><div class="m-value blue">${grandEye} pcs</div></div>
+    </div>
+    ${missingHtml}
+    <div class="sdiv">Branch Reports — ${label} / ${mKrd}</div>
+    ${summaryCards || `<div style="text-align:center;padding:40px;color:var(--light);">No summaries submitted yet for ${label}.</div>`}
+    <div style="margin-top:8px;"><button class="btn-sm" onclick="window.print()">🖨️ Print All Reports</button></div>`;
+
+  }catch(e){
+    el('sum-body').innerHTML=`<div class="alert aerr" style="display:block;">❌ ${e.message}<br><br>
+    <strong>If this is your first time using Summaries, run this SQL in Supabase:</strong><br><br>
+    <code style="font-size:11px;background:#eee;padding:8px;border-radius:4px;display:block;white-space:pre-wrap;">create table if not exists summaries (
+  id bigint generated always as identity primary key,
+  branch text, month text, month_label text, staff text,
+  total_qty numeric, total_sales numeric, sales_currency text,
+  cash_received numeric, cash_currency text,
+  visa_received numeric, visa_currency text,
+  transfer_received numeric, transfer_currency text,
+  returns_amount numeric, returns_currency text,
+  watches_sold int, jewelry_sold int, eyewear_sold int,
+  expense_total numeric, expense_currency text,
+  expense_breakdown text,
+  top_brands text, top_items text, manager_notes text,
+  submitted_at text, created_at timestamptz default now()
+);
+alter table summaries enable row level security;
+create policy "open_summaries" on summaries
+  for all using (true) with check (true);</code></div>`;
+  }
+}
+
+function summaryViewCard(s, showBranch){
+  let expBreakdown = '';
+  try{
+    const eb = JSON.parse(s.expense_breakdown||'{}');
+    const lines = Object.entries(eb).map(([cat,v])=>`<div class="bstat"><span class="bstat-l">${cat}</span><span class="bstat-v">${fmtAmt(v.amount,v.currency)}</span></div>`).join('');
+    if(lines) expBreakdown = `<div style="margin-top:10px;"><div class="sdiv" style="font-size:10px;margin-top:0;">Expense Breakdown</div>${lines}</div>`;
+  }catch(e){}
+
+  return `
+  <div class="card" style="border-left:4px solid var(--gold);margin-bottom:16px;">
+    <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:14px;flex-wrap:wrap;gap:8px;">
+      <div>
+        ${showBranch?`<div style="font-size:16px;font-weight:800;color:var(--navy);">${BRANCHES[s.branch]?.icon||''} ${bFull(s.branch)}</div>
+        <div style="font-size:11px;color:var(--muted);">${bKrd(s.branch)}</div>`:''}
+        <div style="font-size:12px;color:var(--muted);margin-top:4px;">📅 ${s.month_label} &nbsp;|&nbsp; 👤 ${s.staff} &nbsp;|&nbsp; 🕐 ${s.submitted_at?new Date(s.submitted_at).toLocaleDateString('en-GB'):''}</div>
+      </div>
+      <div style="text-align:right;">
+        <div style="font-size:22px;font-weight:800;color:var(--green);">${fU(toUSD(s.total_sales,s.sales_currency)-toUSD(s.expense_total,s.expense_currency)-toUSD(s.returns_amount,s.returns_currency))}</div>
+        <div style="font-size:11px;color:var(--muted);">Net income / داهات</div>
+      </div>
+    </div>
+
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:8px;margin-bottom:14px;">
+      <div class="metric" style="padding:10px 12px;"><div class="m-label">Total Sales</div><div class="m-value" style="font-size:16px;">${fmtAmt(s.total_sales,s.sales_currency)}</div><div class="m-sub">${s.total_qty||0} items sold</div></div>
+      <div class="metric" style="padding:10px 12px;"><div class="m-label">💵 Cash</div><div class="m-value" style="font-size:16px;">${fmtAmt(s.cash_received,s.cash_currency)}</div></div>
+      <div class="metric" style="padding:10px 12px;"><div class="m-label">💳 Visa Card</div><div class="m-value" style="font-size:16px;">${fmtAmt(s.visa_received,s.visa_currency)}</div></div>
+      <div class="metric" style="padding:10px 12px;"><div class="m-label">🏦 Transfer</div><div class="m-value" style="font-size:16px;">${fmtAmt(s.transfer_received,s.transfer_currency)}</div></div>
+      <div class="metric" style="padding:10px 12px;"><div class="m-label">↩ Returns</div><div class="m-value red" style="font-size:16px;">-${fmtAmt(s.returns_amount,s.returns_currency)}</div></div>
+      <div class="metric" style="padding:10px 12px;"><div class="m-label">💸 Expenses</div><div class="m-value red" style="font-size:16px;">-${fmtAmt(s.expense_total,s.expense_currency)}</div></div>
+      <div class="metric" style="padding:10px 12px;"><div class="m-label">⌚ Watches</div><div class="m-value blue" style="font-size:16px;">${s.watches_sold||0}</div><div class="m-sub">pieces</div></div>
+      <div class="metric" style="padding:10px 12px;"><div class="m-label">💍 Jewelry</div><div class="m-value blue" style="font-size:16px;">${s.jewelry_sold||0}</div><div class="m-sub">pieces</div></div>
+      <div class="metric" style="padding:10px 12px;"><div class="m-label">🕶 Eyewear</div><div class="m-value blue" style="font-size:16px;">${s.eyewear_sold||0}</div><div class="m-sub">pieces</div></div>
+    </div>
+
+    ${expBreakdown}
+
+    ${s.top_brands?`<div style="margin-top:12px;padding:12px;background:var(--off);border-radius:var(--rs);"><div style="font-size:11px;font-weight:700;color:var(--navy);text-transform:uppercase;letter-spacing:.5px;margin-bottom:6px;">🏆 Top Selling Brands</div><div style="font-size:13px;white-space:pre-line;line-height:1.8;">${s.top_brands}</div></div>`:''}
+    ${s.top_items?`<div style="margin-top:8px;padding:12px;background:var(--off);border-radius:var(--rs);"><div style="font-size:11px;font-weight:700;color:var(--navy);text-transform:uppercase;letter-spacing:.5px;margin-bottom:6px;">⭐ Top Selling Items</div><div style="font-size:13px;white-space:pre-line;line-height:1.8;">${s.top_items}</div></div>`:''}
+    ${s.manager_notes?`<div style="margin-top:8px;padding:12px;background:#FFF8E8;border:1px solid var(--gold);border-radius:var(--rs);"><div style="font-size:11px;font-weight:700;color:var(--gold-dark);text-transform:uppercase;letter-spacing:.5px;margin-bottom:6px;">💬 Notes to Manager / تێبینی بۆ بەڕێوەبەر</div><div style="font-size:13px;white-space:pre-line;line-height:1.8;color:var(--text);">${s.manager_notes}</div></div>`:''}
+  </div>`;
+}
+</script>
